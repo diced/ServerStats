@@ -1,0 +1,39 @@
+plugins {
+    id 'com.github.johnrengelman.shadow'
+}
+
+archivesBaseName = 'ServerStats-Bukkit'
+version = project.mod_version
+group = project.maven_group + '.bukkit'
+
+repositories {
+    maven { url 'https://papermc.io/repo/repository/maven-public/' }
+    maven { url 'https://libraries.minecraft.net/' }
+}
+
+dependencies {
+    implementation project(':common')
+
+    compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
+    implementation 'org.slf4j:slf4j-jdk14:1.7.30'
+}
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from(sourceSets.main.resources.srcDirs) {
+        include 'plugin.yml'
+        expand 'version': project.version
+    }
+}
+
+shadowJar {
+    archiveClassifier.set(null)
+    minimize()
+
+    relocate 'org.slf4j', "${rootProject.group}.lib.org.slf4j"
+    relocate 'io.prometheus.client', "${rootProject.group}.lib.io.prometheus.client"
+    relocate 'org.spongepowered.configurate', "${rootProject.group}.lib.org.spongepowered.configurate"
+    relocate 'org.checkerframework', "${rootProject.group}.lib.org.checkerframework"
+}
+
+tasks.build.dependsOn tasks.shadowJar

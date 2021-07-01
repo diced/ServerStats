@@ -1,0 +1,40 @@
+plugins {
+    id 'com.github.johnrengelman.shadow'
+}
+
+archivesBaseName = 'ServerStats-Bungee'
+version = project.mod_version
+group = project.maven_group + '.bungee'
+
+repositories {
+   maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+}
+
+dependencies {
+    implementation project(':common')
+
+    compileOnly 'net.md-5:bungeecord-api:1.16-R0.4'
+}
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+    from(sourceSets.main.resources.srcDirs) {
+        expand 'version': project.version
+    }
+}
+
+shadowJar {
+    archiveClassifier.set(null)
+    minimize()
+
+    relocate 'org.slf4j', "${rootProject.group}.lib.org.slf4j"
+    relocate 'io.prometheus.client', "${rootProject.group}.lib.io.prometheus.client"
+    relocate 'org.spongepowered.configurate', "${rootProject.group}.lib.org.spongepowered.configurate"
+    relocate 'org.checkerframework', "${rootProject.group}.lib.org.checkerframework"
+}
+
+tasks.build.dependsOn tasks.shadowJar

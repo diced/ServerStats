@@ -1,0 +1,85 @@
+plugins {
+    id 'fabric-loom' version '0.8-SNAPSHOT'
+    id 'com.github.johnrengelman.shadow'
+}
+
+archivesBaseName = "ServerStats-Fabric"
+version = project.mod_version
+group = project.maven_group + '.fabric'
+
+repositories {
+    maven { url "https://mvnrepository.com/artifact/io.prometheus" }
+    maven { url 'https://masa.dy.fi/maven' }
+}
+
+dependencies {
+    // To change the versions see the gradle.properties file
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    // Fabric API. This is technically optional, but you probably want it anyway.
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modImplementation "carpet:fabric-carpet:${project.minecraft_version}-${project.carpet_core_version}"
+
+    implementation 'io.prometheus:simpleclient:0.10.0'
+    implementation 'io.prometheus:simpleclient_httpserver:0.10.0'
+    implementation 'io.prometheus:simpleclient_servlet:0.11.0'
+    implementation project(':common')
+
+    shadow project(':common')
+    shadow 'io.prometheus:simpleclient:0.10.0'
+    shadow 'io.prometheus:simpleclient_httpserver:0.10.0'
+    shadow 'io.prometheus:simpleclient_servlet:0.11.0'
+}
+
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    // ensure that the encoding is set to UTF-8, no matter what the system default is
+    // this fixes some edge cases with special characters not displaying correctly
+    // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+    // If Javadoc is generated, this must be specified in that task too.
+    it.options.encoding = "UTF-8"
+
+    // Minecraft 1.17 (21w19a) upwards uses Java 16.
+    it.options.release = 16
+}
+
+java {
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
+    withSourcesJar()
+}
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+    classifier 'shadow-dev'
+}
+
+import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+
+task relocateShadowJar(type: ConfigureShadowRelocation) {
+    target = tasks.shadowJar
+    prefix = "${project.group}.${project.archivesBaseName}.shadow"
+}
+tasks.shadowJar.dependsOn tasks.relocateShadowJar
+
+remapJar {
+    dependsOn shadowJar
+    input.set shadowJar.archiveFile.get()
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}"}
+    }
+}

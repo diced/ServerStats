@@ -1,0 +1,5 @@
+name: ServerStats
+version: ${version}
+main: me.diced.serverstats.bungee.ServerStatsBungee
+author: dicedtomato
+description: Export Minecraft server stats to Prometheus
