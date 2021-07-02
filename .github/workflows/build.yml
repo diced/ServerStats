@@ -58,7 +58,7 @@ jobs:
         run: |
           cd ./build && ls
           git init
-          git remote add origin https://diced:${{ secrets.GITHUB_TOKEN }}@github.com/diced/testst.git
+          git remote add origin https://diced:${{ secrets.GITHUB_TOKEN }}@github.com/diced/ServerStats.git
           git checkout -b builds
           cd ..
       - name: Release Canary Build
