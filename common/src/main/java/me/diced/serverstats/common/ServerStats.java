@@ -18,10 +18,11 @@ public class ServerStats {
 
     public ServerStats(ServerStatsPlatform platform) throws IOException {
         this.platform = platform;
-        this.webServer = new StatsWebServer(this, new InetSocketAddress("0.0.0.0", 8000), "/metrics");
 
         ConfigLoader<ServerStatsConfig> configLoader = new ConfigLoader<>(ServerStatsConfig.class, this.platform.getConfigPath());
         this.config = configLoader.load();
+
+        this.webServer = new StatsWebServer(this, new InetSocketAddress(this.config.webServer.hostname, this.config.webServer.port), this.config.webServer.route);
     }
 
     public void startInterval() {
