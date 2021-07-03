@@ -6,6 +6,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 @ConfigSerializable
 public class ServerStatsConfig {
     public ServerStatsWebServerConfig webServer;
+    public ServerStatsPushableConfig pushable;
 
     public ServerStatsLogsConfig logs;
 

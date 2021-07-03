@@ -22,6 +22,7 @@ public class ServerStatsFabric implements ModInitializer, ServerStatsPlatform {
     private ServerStats serverStats;
     private Thread statsThread;
     private Thread webThread;
+    private CommandExecutorFabric commandExecutor;
     private final Logger logger = LoggerFactory.getLogger("ServerStats");
     private long next;
 
@@ -29,6 +30,7 @@ public class ServerStatsFabric implements ModInitializer, ServerStatsPlatform {
     public void onInitialize() {
         try {
             this.serverStats = new ServerStats(this);
+            this.commandExecutor = new CommandExecutorFabric(this);
             this.start();
         } catch (IOException e) {
             e.printStackTrace();

@@ -33,7 +33,7 @@ public class ServerStats {
     }
 
     public void pushStats() {
-        this.gauges.setValues();
+        this.gauges.setValues(this.config.pushable);
         this.next = System.currentTimeMillis() + this.config.interval;
 
         if (this.config.logs.writeLogs) {

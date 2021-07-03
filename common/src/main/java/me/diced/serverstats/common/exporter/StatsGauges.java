@@ -2,6 +2,7 @@ package me.diced.serverstats.common.exporter;
 
 import io.prometheus.client.Gauge;
 import me.diced.serverstats.common.ServerStats;
+import me.diced.serverstats.common.config.ServerStatsPushableConfig;
 
 public class StatsGauges {
     private ServerStats serverStats;
@@ -43,16 +44,16 @@ public class StatsGauges {
         this.serverStats = serverStats;
     }
 
-    public void setValues() {
+    public void setValues(ServerStatsPushableConfig conf) {
         Stats stats = this.serverStats.platform.getStats();
 
-        this.playerCountGauge.set(stats.playerCount);
-        this.freeMemoryGauge.set(stats.freeMemory);
-        this.maxMemoryGauge.set(stats.maxMemory);
-        this.totalMemoryGauge.set(stats.totalMemory);
-        this.loadedChunksGauge.set(stats.loadedChunks.intValue());
-        this.entityCountGauge.set(stats.entityCount.intValue());
-        this.tpsGauge.set(stats.tps);
-        this.msptGauge.set(stats.mspt);
+        if (conf.playerCount) this.playerCountGauge.set(stats.playerCount);
+        if (conf.freeMemory) this.freeMemoryGauge.set(stats.freeMemory);
+        if (conf.maxMemory) this.maxMemoryGauge.set(stats.maxMemory);
+        if (conf.totalMemory) this.totalMemoryGauge.set(stats.totalMemory);
+        if (conf.loadedChunks) this.loadedChunksGauge.set(stats.loadedChunks.intValue());
+        if (conf.entityCount) this.entityCountGauge.set(stats.entityCount.intValue());
+        if (conf.tps) this.tpsGauge.set(stats.tps);
+        if (conf.mspt) this.msptGauge.set(stats.mspt);
     }
 }
