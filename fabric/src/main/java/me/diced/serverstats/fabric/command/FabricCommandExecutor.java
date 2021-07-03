@@ -67,7 +67,10 @@ public class FabricCommandExecutor implements CommandExecutor<FabricContext>, Co
         builder.suggest("get");
 
         // add push if op
-        if (context.getSource().hasPermissionLevel(4)) builder.suggest("push");
+        if (context.getSource().hasPermissionLevel(4)) {
+            builder.suggest("push");
+            builder.suggest("toggle");
+        }
 
         return builder.buildFuture();
     }
@@ -80,6 +83,8 @@ public class FabricCommandExecutor implements CommandExecutor<FabricContext>, Co
         msgs.add(Messenger.c("wb Commands: "));
         msgs.add(Messenger.s("/stats get - View current stats"));
         msgs.add(Messenger.s("/stats push - Update stats to exporter"));
+        msgs.add(Messenger.s("/stats toggle - Toggle the interval"));
+
 
         ctx.sendMessage(msgs);
     }
@@ -115,6 +120,24 @@ public class FabricCommandExecutor implements CommandExecutor<FabricContext>, Co
         }
 
         ctx.sendMessage(msgs);
+    }
 
+    @Override
+    public void toggleCommand(FabricContext ctx) {
+        List<BaseText> msgs = new ArrayList<>();
+
+        boolean isOp = ctx.isOp();
+        if (!isOp) {
+            msgs.add(Messenger.c("r Not an operator..."));
+        } else {
+            boolean toggled = this.platform.toggleInterval();
+            if (toggled) {
+                msgs.add(Messenger.c("l Interval is now running."));
+            } else {
+                msgs.add(Messenger.c("l Interval is no longer running."));
+            }
+        }
+
+        ctx.sendMessage(msgs);
     }
 }

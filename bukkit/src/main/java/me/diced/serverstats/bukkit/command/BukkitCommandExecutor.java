@@ -48,8 +48,10 @@ public class BukkitCommandExecutor implements CommandExecutor<BukkitContext>, Ta
 
         res.add("get");
 
-        // add push if op
-        if (sender.isOp()) res.add("push");
+        if (sender.isOp()) {
+            res.add("push");
+            res.add("toggle");
+        }
 
         return res;
     }
@@ -63,6 +65,7 @@ public class BukkitCommandExecutor implements CommandExecutor<BukkitContext>, Ta
         msgs.add("" + ChatColor.WHITE + ChatColor.BOLD + "Commands: ");
         msgs.add("/stats get - View current stats");
         msgs.add("/stats push - Update stats to exporter");
+        msgs.add("/stats toggle - Toggle the interval");
 
         ctx.sendMessage(msgs);
     }
@@ -90,6 +93,23 @@ public class BukkitCommandExecutor implements CommandExecutor<BukkitContext>, Ta
             msgs.add("" + ChatColor.RED + "Not an operator...");
         } else {
             msgs.add("" + ChatColor.AQUA + "Pushed Stats");
+        }
+
+        ctx.sendMessage(msgs);
+    }
+
+    @Override
+    public void toggleCommand(BukkitContext ctx) {
+        List<String> msgs = new ArrayList<>();
+        if (ctx.isOp()) {
+            boolean toggled = this.platform.toggleInterval();
+            if (toggled) {
+                msgs.add("" + ChatColor.AQUA + "Interval is now running.");
+            } else {
+                msgs.add("" + ChatColor.AQUA + "Interval is no longer running.");
+            }
+        } else {
+            msgs.add("" + ChatColor.RED + "Not an operator...");
         }
 
         ctx.sendMessage(msgs);

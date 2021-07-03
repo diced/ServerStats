@@ -103,4 +103,8 @@ public final class BungeeServerStats extends Plugin implements ServerStatsPlatfo
         this.webTask.cancel();
         this.statsTask.cancel();
     }
+
+    public boolean toggleInterval() {
+        return this.serverStats.toggleInterval();
+    }
 }

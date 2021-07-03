@@ -13,6 +13,7 @@ public class ServerStats {
     public ServerStatsPlatform platform;
     public ServerStatsConfig config;
     private long next;
+    private boolean intervalRunning = true;
 
     public final StatsGauges gauges = new StatsGauges(this);
 
@@ -34,11 +35,18 @@ public class ServerStats {
     }
 
     public void pushStats() {
-        this.gauges.setValues(this.config.pushable);
-        this.next = System.currentTimeMillis() + this.config.interval;
+        if (this.intervalRunning) {
+            this.gauges.setValues(this.config.pushable);
+            this.next = System.currentTimeMillis() + this.config.interval;
 
-        if (this.config.logs.writeLogs) {
-            this.platform.infoLog(this.config.logs.writeLog);
+            if (this.config.logs.writeLogs) {
+                this.platform.infoLog(this.config.logs.writeLog);
+            }
         }
+    }
+
+    public boolean toggleInterval() {
+        this.intervalRunning = !this.intervalRunning;
+        return this.intervalRunning;
     }
 }

@@ -6,16 +6,20 @@ public interface CommandExecutor<C> {
     void helpCommand(C ctx);
     void pushCommand(C ctx);
     void getCommand(C ctx);
+    void toggleCommand(C ctx);
+
     default void executeCommand(List<String> args, C ctx) {
         if (args.size() == 0) {
             this.helpCommand(ctx);
         } else {
-            if (args.get(0).equalsIgnoreCase("get")) {
-                this.getCommand(ctx);
-            } else if (args.get(0).equalsIgnoreCase("push")) {
-                this.pushCommand(ctx);
-            } else {
-                this.helpCommand(ctx);
+            String arg = args.get(0).toLowerCase();
+            Command cmd = Command.fromString(arg);
+
+            switch (cmd) {
+                case PUSH -> this.pushCommand(ctx);
+                case GET -> this.getCommand(ctx);
+                case TOGGLE -> this.toggleCommand(ctx);
+                default -> this.helpCommand(ctx);
             }
         }
     }

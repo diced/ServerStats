@@ -7,7 +7,6 @@ import me.diced.serverstats.common.util.QuotedStringTokenizer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.api.plugin.PluginDescription;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
 import java.util.ArrayList;
@@ -29,6 +28,7 @@ public class BungeeCommandExecutor extends Command implements CommandExecutor<Bu
 
         res.add("get");
         res.add("push");
+        res.add("toggle");
 
         return res;
     }
@@ -50,6 +50,7 @@ public class BungeeCommandExecutor extends Command implements CommandExecutor<Bu
         msgs.add("" + ChatColor.WHITE + ChatColor.BOLD + "Commands: ");
         msgs.add("/stats get - View current stats");
         msgs.add("/stats push - Update stats to exporter");
+        msgs.add("/stats toggle - Toggle the interval");
 
         ctx.sendMessage(msgs);
     }
@@ -78,6 +79,19 @@ public class BungeeCommandExecutor extends Command implements CommandExecutor<Bu
         List<String> msgs = new ArrayList<>();
 
         msgs.add("" + ChatColor.AQUA + "Pushed Stats");
+
+        ctx.sendMessage(msgs);
+    }
+
+    @Override
+    public void toggleCommand(BungeeContext ctx) {
+        List<String> msgs = new ArrayList<>();
+        boolean toggled = this.platform.toggleInterval();
+        if (toggled) {
+            msgs.add("" + ChatColor.AQUA + "Interval is now running.");
+        } else {
+            msgs.add("" + ChatColor.AQUA + "Interval is no longer running.");
+        }
 
         ctx.sendMessage(msgs);
     }

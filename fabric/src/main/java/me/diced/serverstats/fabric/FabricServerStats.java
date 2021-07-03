@@ -114,4 +114,8 @@ public class FabricServerStats implements ModInitializer, ServerStatsPlatform {
         this.webThread.interrupt();
         this.statsThread.interrupt();
     }
+
+    public boolean toggleInterval() {
+        return this.serverStats.toggleInterval();
+    }
 }

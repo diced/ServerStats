@@ -106,4 +106,8 @@ public class BukkitServerStats extends JavaPlugin implements ServerStatsPlatform
         this.webTask.cancel();
         this.statsTask.cancel();
     }
+
+    public boolean toggleInterval() {
+        return this.serverStats.toggleInterval();
+    }
 }
