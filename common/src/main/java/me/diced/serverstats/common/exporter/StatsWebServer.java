@@ -14,21 +14,22 @@ import java.net.InetSocketAddress;
 
 public class StatsWebServer {
     private final HttpServer server;
-    private final ServerStats serverStats;
     public final InetSocketAddress addr;
 
-    public StatsWebServer(ServerStats serverStats, InetSocketAddress addr, String route) throws IOException {
+    public StatsWebServer(InetSocketAddress addr, String route) throws IOException {
         this.server = HttpServer.create(addr, 0);
         this.addr = addr;
 
         this.server.createContext(route, new StatsMetricsHandler());
         this.server.setExecutor(null);
-
-        this.serverStats = serverStats;
     }
 
     public void start() {
         this.server.start();
+    }
+
+    public void stop() {
+        this.server.stop(0);
     }
 
     private static class StatsMetricsHandler implements HttpHandler {

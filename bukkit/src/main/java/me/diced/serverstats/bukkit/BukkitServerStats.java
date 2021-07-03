@@ -8,6 +8,7 @@ import me.diced.serverstats.common.exporter.Stats;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,8 @@ public class BukkitServerStats extends JavaPlugin implements ServerStatsPlatform
     private ServerStats serverStats;
     private Logger logger = LoggerFactory.getLogger("ServerStats");
     private PluginDescriptionFile meta = this.getDescription();
+    private BukkitTask webTask;
+    private BukkitTask statsTask;
 
     @Override
     public final void onEnable() {
@@ -32,8 +35,13 @@ public class BukkitServerStats extends JavaPlugin implements ServerStatsPlatform
     }
 
     @Override
+    public final void onDisable() {
+        this.stop();
+    }
+
+    @Override
     public Path getConfigPath() {
-        return getDataFolder().toPath().resolve("serverstats.yml");
+        return getDataFolder().toPath().resolve("serverstats.conf");
     }
 
     @Override
@@ -81,7 +89,7 @@ public class BukkitServerStats extends JavaPlugin implements ServerStatsPlatform
 
     @Override
     public void start() {
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+        this.webTask = Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             this.serverStats.webServer.start();
 
             String address = this.serverStats.webServer.addr.getHostName() + ":" + this.serverStats.webServer.addr.getPort();
@@ -90,11 +98,12 @@ public class BukkitServerStats extends JavaPlugin implements ServerStatsPlatform
 
         long time = (this.serverStats.config.interval / 1000) * 20;
 
-        Bukkit.getScheduler().runTaskTimer(this, () -> this.serverStats.pushStats(), 0L, time);
+        this.statsTask = Bukkit.getScheduler().runTaskTimer(this, () -> this.serverStats.pushStats(), 0L, time);
     }
 
     @Override
     public void stop() {
-
+        this.webTask.cancel();
+        this.statsTask.cancel();
     }
 }

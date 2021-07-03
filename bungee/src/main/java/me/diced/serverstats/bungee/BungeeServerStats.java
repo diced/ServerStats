@@ -8,6 +8,7 @@ import me.diced.serverstats.common.exporter.Stats;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginDescription;
 import net.md_5.bungee.api.plugin.PluginLogger;
+import net.md_5.bungee.api.scheduler.ScheduledTask;
 import net.md_5.bungee.api.scheduler.TaskScheduler;
 
 import java.io.IOException;
@@ -20,6 +21,8 @@ public final class BungeeServerStats extends Plugin implements ServerStatsPlatfo
     private ServerStats serverStats;
     private Logger logger = PluginLogger.getLogger("ServerStats");
     private PluginDescription meta = this.getDescription();
+    private ScheduledTask webTask;
+    private ScheduledTask statsTask;
 
     @Override
     public void onEnable() {
@@ -39,7 +42,7 @@ public final class BungeeServerStats extends Plugin implements ServerStatsPlatfo
 
     @Override
     public Path getConfigPath() {
-        return this.getDataFolder().toPath().resolve("serverstats.yml");
+        return this.getDataFolder().toPath().resolve("serverstats.conf");
     }
 
     @Override
@@ -84,7 +87,7 @@ public final class BungeeServerStats extends Plugin implements ServerStatsPlatfo
     public void start() {
         TaskScheduler scheduler = this.getProxy().getScheduler();
 
-        scheduler.runAsync(this, () -> {
+        this.webTask = scheduler.runAsync(this, () -> {
             this.serverStats.webServer.start();
 
             String address = this.serverStats.webServer.addr.getHostName() + ":" + this.serverStats.webServer.addr.getPort();
@@ -92,11 +95,12 @@ public final class BungeeServerStats extends Plugin implements ServerStatsPlatfo
         });
 
         this.serverStats.pushStats();
-        scheduler.schedule(this, () -> this.serverStats.pushStats(), this.serverStats.config.interval, TimeUnit.MILLISECONDS);
+        this.statsTask = scheduler.schedule(this, () -> this.serverStats.pushStats(), this.serverStats.config.interval, TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void stop() {
-
+        this.webTask.cancel();
+        this.statsTask.cancel();
     }
 }

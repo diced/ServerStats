@@ -41,7 +41,7 @@ public class FabricServerStats implements ModInitializer, ServerStatsPlatform {
 
     @Override
     public Path getConfigPath() {
-        return FabricLoader.getInstance().getConfigDir().resolve("serverstats.yml");
+        return FabricLoader.getInstance().getConfigDir().resolve("serverstats.conf");
     }
 
     @Override
@@ -105,10 +105,13 @@ public class FabricServerStats implements ModInitializer, ServerStatsPlatform {
             this.statsThread.setName("ServerStats");
             this.statsThread.start();
         });
+
+        ServerLifecycleEvents.SERVER_STOPPED.register(s -> this.stop());
     }
 
     @Override
     public void stop() {
-
+        this.webThread.interrupt();
+        this.statsThread.interrupt();
     }
 }

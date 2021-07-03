@@ -5,17 +5,17 @@ import java.nio.file.Path;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
+import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
 
-public class zConfigLoader<T> {
-    private final YamlConfigurationLoader loader;
+public class ConfigLoader<T> {
+    private final HoconConfigurationLoader loader;
     private final Class<T> clazz;
     private final Path path;
 
     public ConfigLoader(Class<T> clazz, Path path) {
         this.clazz = clazz;
         this.path = path;
-        this.loader = YamlConfigurationLoader.builder()
+        this.loader = HoconConfigurationLoader.builder()
                 .path(path)
                 .defaultOptions(opts -> opts.shouldCopyDefaults(true))
                 .build();
