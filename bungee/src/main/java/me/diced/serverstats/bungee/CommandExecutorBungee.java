@@ -2,38 +2,40 @@ package me.diced.serverstats.bungee;
 
 import me.diced.serverstats.common.exporter.Stats;
 import me.diced.serverstats.common.util.QuotedStringTokenizer;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.TabExecutor;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.PluginDescription;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandExecutorBungee implements TabExecutor, Listener {
-    private ServerStatsBukkit platform;
-    private PluginCommand command;
+public class CommandExecutorBungee extends Command implements TabExecutor {
+    private ServerStatsBungee platform;
 
-    public CommandExecutorBungee(ServerStatsBukkit platform) {
+    public CommandExecutorBungee(ServerStatsBungee platform) {
+        super("stats", null);
+
         this.platform = platform;
-        this.command = platform.getCommand("stats");
-
-        this.command.setExecutor(this);
-        this.command.setTabCompleter(this);
-
-        this.platform.getServer().getPluginManager().registerEvents(this, this.platform);
+        this.platform.getProxy().getPluginManager().registerCommand(this.platform, this);
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        List<String> res = new ArrayList<>();
+
+        res.add("get");
+        res.add("push");
+
+        return res;
+    }
+
+    @Override
+    public void execute(CommandSender sender, String[] args) {
         List<String> arguments = new QuotedStringTokenizer(String.join(" ", args)).tokenize(true);
 
-        Context ctx = new Context(sender, command);
+        Context ctx = new Context(sender);
 
         if (arguments.size() == 0) {
             this.helpCommand(ctx);
@@ -46,25 +48,11 @@ public class CommandExecutorBungee implements TabExecutor, Listener {
                 this.helpCommand(ctx);
             }
         }
-
-        return true;
-    }
-
-    @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        List<String> res = new ArrayList<>();
-
-        res.add("get");
-
-        // add push if op
-        if (sender.isOp()) res.add("push");
-
-        return res;
     }
 
     private void helpCommand(Context ctx) {
-        PluginDescriptionFile meta = this.platform.getDescription();
-        String author = meta.getAuthors().get(0);
+        PluginDescription meta = this.platform.getDescription();
+        String author = meta.getAuthor();
         String version = meta.getVersion();
 
         List<String> msgs = new ArrayList<>();
@@ -96,14 +84,9 @@ public class CommandExecutorBungee implements TabExecutor, Listener {
     }
 
     private void pushCommand(Context ctx) {
-        boolean isOp = ctx.isOp();
         List<String> msgs = new ArrayList<>();
 
-        if (!isOp) {
-            msgs.add("" + ChatColor.RED + "Not an operator...");
-        } else {
-            msgs.add("" + ChatColor.AQUA + "Pushed Stats");
-        }
+        msgs.add("" + ChatColor.AQUA + "Pushed Stats");
 
         ctx.sendMessage(msgs);
     }

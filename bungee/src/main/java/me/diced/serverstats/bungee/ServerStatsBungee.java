@@ -17,11 +17,13 @@ import java.util.logging.Logger;
 public final class ServerStatsBungee extends Plugin implements ServerStatsPlatform {
     private ServerStats serverStats;
     private Logger logger = PluginLogger.getLogger("ServerStats");
+    private CommandExecutorBungee commandExecutor;
 
     @Override
     public void onEnable() {
         try {
             this.serverStats = new ServerStats(this);
+            this.commandExecutor = new CommandExecutorBungee(this);
             this.start();
         } catch (IOException e) {
             e.printStackTrace();

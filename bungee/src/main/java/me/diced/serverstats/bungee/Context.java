@@ -1,26 +1,24 @@
-package me.diced.serverstats.bukkit;
+package me.diced.serverstats.bungee;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import java.util.List;
 
 public class Context {
     private CommandSender sender;
-    private Command command;
 
-    public Context(CommandSender sender, Command command) {
+    public Context(CommandSender sender) {
         this.sender = sender;
-        this.command = command;
     }
 
     public void sendMessage(List<String> messages) {
-        this.sender.sendMessage(messages.toArray(new String[0]));
-    }
+        ComponentBuilder builder = new ComponentBuilder();
+        for (String msg : messages) {
+            builder.append(msg + "\n");
+        }
 
-    public boolean isOp() {
-        return this.sender.isOp();
+        this.sender.sendMessage(builder.create());
     }
 
     public static ChatColor heatmapColor(double actual, double reference)
