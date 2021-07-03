@@ -5,9 +5,11 @@ import me.diced.serverstats.common.ServerStats;
 import me.diced.serverstats.common.ServerStatsPlatform;
 import me.diced.serverstats.common.ServerStatsType;
 import me.diced.serverstats.common.exporter.Stats;
+import me.diced.serverstats.fabric.command.FabricCommandExecutor;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.MathHelper;
 import org.slf4j.Logger;
@@ -17,12 +19,12 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ServerStatsFabric implements ModInitializer, ServerStatsPlatform {
+public class FabricServerStats implements ModInitializer, ServerStatsPlatform {
     private MinecraftServer server;
     private ServerStats serverStats;
     private Thread statsThread;
     private Thread webThread;
-    private CommandExecutorFabric commandExecutor;
+    private ModMetadata meta = FabricLoader.getInstance().getModContainer("serverstats").get().getMetadata();
     private final Logger logger = LoggerFactory.getLogger("ServerStats");
     private long next;
 
@@ -30,7 +32,7 @@ public class ServerStatsFabric implements ModInitializer, ServerStatsPlatform {
     public void onInitialize() {
         try {
             this.serverStats = new ServerStats(this);
-            this.commandExecutor = new CommandExecutorFabric(this);
+            new FabricCommandExecutor(this);
             this.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -45,6 +47,16 @@ public class ServerStatsFabric implements ModInitializer, ServerStatsPlatform {
     @Override
     public ServerStatsType getType() {
         return ServerStatsType.FABRIC;
+    }
+
+    @Override
+    public String getVersion() {
+        return this.meta.getVersion().getFriendlyString();
+    }
+
+    @Override
+    public String getAuthor() {
+        return this.meta.getAuthors().stream().findFirst().get().getName();
     }
 
     @Override

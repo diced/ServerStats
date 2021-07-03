@@ -1,8 +1,8 @@
 name: ServerStats
-main: me.diced.serverstats.bukkit.ServerStatsBukkit
+main: me.diced.serverstats.bukkit.BukkitServerStats
 version: ${version}
 api-version: 1.13
-description: Export Minecraft server stats to Prometheus
+description: Visualize your Minecraft server statistics in realtime
 authors: [dicedtomato]
 
 commands:

@@ -1,18 +1,17 @@
-package me.diced.serverstats.bukkit;
+package me.diced.serverstats.bukkit.command;
 
+import me.diced.serverstats.common.command.Context;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
-public class Context {
+public class BukkitContext implements Context<String> {
     private CommandSender sender;
-    private Command command;
 
-    public Context(CommandSender sender, Command command) {
+    public BukkitContext(CommandSender sender) {
         this.sender = sender;
-        this.command = command;
     }
 
     public void sendMessage(List<String> messages) {

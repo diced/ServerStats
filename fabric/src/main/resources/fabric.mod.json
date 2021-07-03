@@ -3,10 +3,10 @@
   "id": "serverstats",
   "version": "${version}",
   "name": "ServerStats",
-  "description": "Export Minecraft server stats to Prometheus",
+  "description": "Visualize your Minecraft server statistics in realtime",
   "authors": ["dicedtomato"],
   "contact": {
-    "homepage": "https://stats.diced.me",
+    "homepage": "https://serverstats.diced.me",
     "sources": "https://github.com/diced/ServerStats"
   },
   "license": "MIT",
@@ -14,7 +14,7 @@
   "environment": "server",
   "entrypoints": {
     "main": [
-      "me.diced.serverstats.fabric.ServerStatsFabric"
+      "me.diced.serverstats.fabric.FabricServerStats"
     ]
   },
   "mixins": [],

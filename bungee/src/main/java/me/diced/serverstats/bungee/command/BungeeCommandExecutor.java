@@ -1,5 +1,7 @@
-package me.diced.serverstats.bungee;
+package me.diced.serverstats.bungee.command;
 
+import me.diced.serverstats.bungee.BungeeServerStats;
+import me.diced.serverstats.common.command.CommandExecutor;
 import me.diced.serverstats.common.exporter.Stats;
 import me.diced.serverstats.common.util.QuotedStringTokenizer;
 import net.md_5.bungee.api.ChatColor;
@@ -11,10 +13,10 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandExecutorBungee extends Command implements TabExecutor {
-    private ServerStatsBungee platform;
+public class BungeeCommandExecutor extends Command implements CommandExecutor<BungeeContext>, TabExecutor {
+    private BungeeServerStats platform;
 
-    public CommandExecutorBungee(ServerStatsBungee platform) {
+    public BungeeCommandExecutor(BungeeServerStats platform) {
         super("stats", null);
 
         this.platform = platform;
@@ -35,29 +37,16 @@ public class CommandExecutorBungee extends Command implements TabExecutor {
     public void execute(CommandSender sender, String[] args) {
         List<String> arguments = new QuotedStringTokenizer(String.join(" ", args)).tokenize(true);
 
-        Context ctx = new Context(sender);
+        BungeeContext ctx = new BungeeContext(sender);
 
-        if (arguments.size() == 0) {
-            this.helpCommand(ctx);
-        } else {
-            if (arguments.get(0).equalsIgnoreCase("get")) {
-                this.getCommand(ctx);
-            } else if (arguments.get(0).equalsIgnoreCase("push")) {
-                this.pushCommand(ctx);
-            } else {
-                this.helpCommand(ctx);
-            }
-        }
+        this.executeCommand(arguments, ctx);
     }
 
-    private void helpCommand(Context ctx) {
-        PluginDescription meta = this.platform.getDescription();
-        String author = meta.getAuthor();
-        String version = meta.getVersion();
-
+    @Override
+    public void helpCommand(BungeeContext ctx) {
         List<String> msgs = new ArrayList<>();
-        msgs.add("" + ChatColor.WHITE + ChatColor.BOLD + "ServerStats Bukkit by " + author);
-        msgs.add("" + ChatColor.GRAY + "ServerStats Version: " + version);
+        msgs.add("" + ChatColor.WHITE + ChatColor.BOLD + "ServerStats " + this.platform.getType().toString() + " by " + this.platform.getAuthor());
+        msgs.add("" + ChatColor.GRAY + "ServerStats Version: " + this.platform.getVersion());
         msgs.add("" + ChatColor.WHITE + ChatColor.BOLD + "Commands: ");
         msgs.add("/stats get - View current stats");
         msgs.add("/stats push - Update stats to exporter");
@@ -65,10 +54,11 @@ public class CommandExecutorBungee extends Command implements TabExecutor {
         ctx.sendMessage(msgs);
     }
 
-    private void getCommand(Context ctx) {
+    @Override
+    public void getCommand(BungeeContext ctx) {
         Stats stats = this.platform.getStats();
         List<String> msgs = new ArrayList<>();
-        ChatColor color = Context.heatmapColor(stats.tps, 50.0);
+        ChatColor color = BungeeContext.heatmapColor(stats.tps, 50.0);
 
         msgs.add(goldTextBold("Stats:"));
         msgs.add(goldText("TPS: " + String.format("%s %.1f", color, stats.tps)));
@@ -83,7 +73,8 @@ public class CommandExecutorBungee extends Command implements TabExecutor {
         ctx.sendMessage(msgs);
     }
 
-    private void pushCommand(Context ctx) {
+    @Override
+    public void pushCommand(BungeeContext ctx) {
         List<String> msgs = new ArrayList<>();
 
         msgs.add("" + ChatColor.AQUA + "Pushed Stats");

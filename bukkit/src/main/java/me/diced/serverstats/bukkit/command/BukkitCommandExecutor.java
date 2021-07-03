@@ -1,5 +1,7 @@
-package me.diced.serverstats.bukkit;
+package me.diced.serverstats.bukkit.command;
 
+import me.diced.serverstats.bukkit.BukkitServerStats;
+import me.diced.serverstats.common.command.CommandExecutor;
 import me.diced.serverstats.common.exporter.Stats;
 import me.diced.serverstats.common.util.QuotedStringTokenizer;
 import org.bukkit.ChatColor;
@@ -7,7 +9,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
@@ -15,13 +16,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
-public class CommandExecutorBukkit implements TabExecutor, Listener {
-    private ServerStatsBukkit platform;
+public class BukkitCommandExecutor implements CommandExecutor<BukkitContext>, TabExecutor, Listener {
+    private BukkitServerStats platform;
     private PluginCommand command;
 
-    public CommandExecutorBukkit(ServerStatsBukkit platform) {
+    public BukkitCommandExecutor(BukkitServerStats platform) {
         this.platform = platform;
         this.command = platform.getCommand("stats");
 
@@ -35,19 +35,9 @@ public class CommandExecutorBukkit implements TabExecutor, Listener {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         List<String> arguments = new QuotedStringTokenizer(String.join(" ", args)).tokenize(true);
 
-        Context ctx = new Context(sender, command);
+        BukkitContext ctx = new BukkitContext(sender);
 
-        if (arguments.size() == 0) {
-            this.helpCommand(ctx);
-        } else {
-            if (arguments.get(0).equalsIgnoreCase("get")) {
-                this.getCommand(ctx);
-            } else if (arguments.get(0).equalsIgnoreCase("push")) {
-                this.pushCommand(ctx);
-            } else {
-                this.helpCommand(ctx);
-            }
-        }
+        this.executeCommand(arguments, ctx);
 
         return true;
     }
@@ -64,14 +54,12 @@ public class CommandExecutorBukkit implements TabExecutor, Listener {
         return res;
     }
 
-    private void helpCommand(Context ctx) {
-        PluginDescriptionFile meta = this.platform.getDescription();
-        String author = meta.getAuthors().get(0);
-        String version = meta.getVersion();
+    @Override
+    public void helpCommand(BukkitContext ctx) {
 
         List<String> msgs = new ArrayList<>();
-        msgs.add("" + ChatColor.WHITE + ChatColor.BOLD + "ServerStats Bukkit by " + author);
-        msgs.add("" + ChatColor.GRAY + "ServerStats Version: " + version);
+        msgs.add("" + ChatColor.WHITE + ChatColor.BOLD +  "ServerStats " + this.platform.getType().toString() + " by " + this.platform.getAuthor());
+        msgs.add("" + ChatColor.GRAY + "ServerStats Version: " + this.platform.getVersion());
         msgs.add("" + ChatColor.WHITE + ChatColor.BOLD + "Commands: ");
         msgs.add("/stats get - View current stats");
         msgs.add("/stats push - Update stats to exporter");
@@ -79,7 +67,8 @@ public class CommandExecutorBukkit implements TabExecutor, Listener {
         ctx.sendMessage(msgs);
     }
 
-    private void getCommand(Context ctx) {
+    @Override
+    public void getCommand(BukkitContext ctx) {
         Stats stats = this.platform.getStats();
         List<String> msgs = new ArrayList<>();
 
@@ -92,7 +81,8 @@ public class CommandExecutorBukkit implements TabExecutor, Listener {
         ctx.sendMessage(msgs);
     }
 
-    private void pushCommand(Context ctx) {
+    @Override
+    public void pushCommand(BukkitContext ctx) {
         boolean isOp = ctx.isOp();
         List<String> msgs = new ArrayList<>();
 

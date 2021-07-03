@@ -7,7 +7,7 @@ import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
-public class ConfigLoader<T> {
+public class zConfigLoader<T> {
     private final YamlConfigurationLoader loader;
     private final Class<T> clazz;
     private final Path path;
