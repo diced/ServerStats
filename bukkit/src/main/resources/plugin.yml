@@ -3,3 +3,8 @@ main: me.diced.serverstats.bukkit.ServerStatsBukkit
 version: ${version}
 api-version: 1.13
 description: Export Minecraft server stats to Prometheus
+authors: [dicedtomato]
+
+commands:
+  stats:
+    description: Manage Server Stats

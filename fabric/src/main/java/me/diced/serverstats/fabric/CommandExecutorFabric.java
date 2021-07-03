@@ -4,15 +4,14 @@ import carpet.helpers.TickSpeed;
 import carpet.utils.Messenger;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import me.diced.serverstats.common.exporter.Stats;
+import me.diced.serverstats.common.util.QuotedStringTokenizer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
-import net.fabricmc.loader.ModContainer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.server.command.ServerCommandSource;
@@ -72,8 +71,11 @@ public class CommandExecutorFabric implements Command<ServerCommandSource>, Sugg
 
     @Override
     public CompletableFuture<Suggestions> getSuggestions(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) {
-        builder.suggest("push");
         builder.suggest("get");
+
+        // add push if op
+        if (context.getSource().hasPermissionLevel(4)) builder.suggest("push");
+
         return builder.buildFuture();
     }
 

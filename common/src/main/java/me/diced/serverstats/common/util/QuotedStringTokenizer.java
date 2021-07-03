@@ -1,4 +1,4 @@
-package me.diced.serverstats.fabric;
+package me.diced.serverstats.common.util;
 
 import java.util.ArrayList;
 import java.util.List;
