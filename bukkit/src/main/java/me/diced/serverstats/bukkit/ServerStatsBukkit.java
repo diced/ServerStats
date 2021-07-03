@@ -6,8 +6,6 @@ import me.diced.serverstats.common.ServerStatsType;
 import me.diced.serverstats.common.exporter.Stats;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,12 +16,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ServerStatsBukkit extends JavaPlugin implements ServerStatsPlatform {
     private ServerStats serverStats;
     private Logger logger = LoggerFactory.getLogger("ServerStats");
-    private long next;
+    private CommandExecutorBukkit commandExecutor;
 
     @Override
     public final void onEnable() {
         try {
             this.serverStats = new ServerStats(this);
+            this.commandExecutor = new CommandExecutorBukkit(this);
             this.start();
         } catch (IOException e) {
             e.printStackTrace();
