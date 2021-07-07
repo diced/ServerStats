@@ -1,5 +1,5 @@
 # ServerStats
-Visualize your Minecraft server statistics in realtime
+Visualize your Minecraft server statistics in realtime for Minecraft 1.8+ (*Only 1.17+ for Fabric*)
 
 Want to learn more? Visit [serverstats.diced.me](https://serverstats.diced.me) for the latest downloads and documentation.
 
