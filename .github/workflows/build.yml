@@ -1,5 +1,22 @@
 name: Build ServerStats
-on: [ push, pull_request ]
+on:
+  push:
+    paths:
+      - 'bukkit/**'
+      - 'bungee/**'
+      - 'fabric/**'
+      - 'common/**'
+      - '.github/**'
+    branches: [ trunk ]
+  pull_request:
+    paths:
+      - 'bukkit/**'
+      - 'bungee/**'
+      - 'fabric/**'
+      - 'common/**'
+      - '.github/**'
+    branches: [ trunk ]
+
 jobs:
   build:
     outputs:
@@ -65,9 +82,14 @@ jobs:
         run: |
           cd ./build
           git add --all
+          beginswith() { case $2 in "$1"*) true;; *) false;; esac; }
           if [[ $(git diff --stat --staged) != '' ]]; then
-            git commit -m "Deploy [${{ needs.build.outputs.version }}] [${{ github.sha }}]"
+            if beginswith refs/tags "${{ github.ref }}"; then
+              git commit -m "Deploy [${{ needs.build.outputs.version }}] [${{ github.sha }}]"
+            else
+              git commit -m "Deploy [${{ needs.build.outputs.version }}] [${{ github.sha }}] [UNSTABLE]"
+            fi
             git push --force --set-upstream origin builds
           else
-            echo "WD clean"
+            echo "clean, not committing"
           fi
