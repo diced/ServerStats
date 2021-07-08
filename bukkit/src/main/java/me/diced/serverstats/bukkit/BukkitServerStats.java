@@ -65,6 +65,11 @@ public class BukkitServerStats extends JavaPlugin implements ServerStatsPlatform
     }
 
     @Override
+    public ServerStats getServerStats() {
+        return this.serverStats;
+    }
+
+    @Override
     public Stats getStats() {
         Runtime runtime = Runtime.getRuntime();
 

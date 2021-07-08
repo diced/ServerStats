@@ -65,6 +65,11 @@ public class FabricServerStats implements ModInitializer, ServerStatsPlatform {
     }
 
     @Override
+    public ServerStats getServerStats() {
+        return this.serverStats;
+    }
+
+    @Override
     public Stats getStats() {
         Runtime runtime = Runtime.getRuntime();
 

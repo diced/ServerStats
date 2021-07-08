@@ -1,25 +1,25 @@
 package me.diced.serverstats.common.command;
 
+import me.diced.serverstats.common.ServerStats;
+
 import java.util.List;
 
-public interface CommandExecutor<C> {
-    void helpCommand(C ctx);
-    void pushCommand(C ctx);
-    void getCommand(C ctx);
-    void toggleCommand(C ctx);
+public interface CommandExecutor{
+    ServerStats getPlatform();
 
-    default void executeCommand(List<String> args, C ctx) {
+    default void executeCommand(List<String> args, Context ctx) {
+        ServerStats serverStats = this.getPlatform();
+
         if (args.size() == 0) {
-            this.helpCommand(ctx);
+            serverStats.getCommand("help").execute(ctx);
         } else {
-            String arg = args.get(0).toLowerCase();
-            Command cmd = Command.fromString(arg);
+            String cmd = args.get(0).toLowerCase();
 
             switch (cmd) {
-                case PUSH -> this.pushCommand(ctx);
-                case GET -> this.getCommand(ctx);
-                case TOGGLE -> this.toggleCommand(ctx);
-                default -> this.helpCommand(ctx);
+                case "push" -> serverStats.getCommand("push").execute(ctx);
+                case "get" -> serverStats.getCommand("get").execute(ctx);
+                case "toggle" -> serverStats.getCommand("toggle").execute(ctx);
+                default -> serverStats.getCommand("help").execute(ctx);
             }
         }
     }

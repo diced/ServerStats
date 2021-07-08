@@ -1,17 +1,12 @@
 package me.diced.serverstats.common.command;
 
-public enum Command {
-    HELP,
-    PUSH,
-    GET,
-    TOGGLE;
+import me.diced.serverstats.common.ServerStats;
 
-    public static Command fromString(String cmd) {
-        return switch (cmd) {
-            case "push" -> PUSH;
-            case "get" -> GET;
-            case "toggle" -> TOGGLE;
-            default -> HELP;
-        };
+public abstract class Command {
+    public ServerStats serverStats;
+    public Command(ServerStats serverStats) {
+        this.serverStats = serverStats;
     }
+
+    public abstract void execute(Context sender);
 }

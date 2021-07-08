@@ -16,6 +16,8 @@ dependencies {
 
     compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
     implementation 'org.slf4j:slf4j-jdk14:1.7.30'
+    implementation 'net.kyori:adventure-api:4.8.1'
+    implementation "net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT"
 }
 
 processResources {
@@ -34,6 +36,7 @@ shadowJar {
     relocate 'io.prometheus.client', "${rootProject.group}.lib.io.prometheus.client"
     relocate 'org.spongepowered.configurate', "${rootProject.group}.lib.org.spongepowered.configurate"
     relocate 'org.checkerframework', "${rootProject.group}.lib.org.checkerframework"
+    relocate 'net.kyori.adventure', "${rootProject.group}.lib.adventure"
 }
 
 tasks.build.dependsOn tasks.shadowJar

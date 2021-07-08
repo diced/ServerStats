@@ -17,6 +17,8 @@ dependencies {
     implementation project(':common')
 
     compileOnly 'net.md-5:bungeecord-api:1.16-R0.4'
+    implementation 'net.kyori:adventure-api:4.8.1'
+    implementation "net.kyori:adventure-platform-bungeecord:4.0.0-SNAPSHOT"
 }
 
 processResources {
@@ -35,6 +37,8 @@ shadowJar {
     relocate 'io.prometheus.client', "${rootProject.group}.lib.io.prometheus.client"
     relocate 'org.spongepowered.configurate', "${rootProject.group}.lib.org.spongepowered.configurate"
     relocate 'org.checkerframework', "${rootProject.group}.lib.org.checkerframework"
+    relocate 'net.kyori.adventure', "${rootProject.group}.lib.adventure"
+
 }
 
 tasks.build.dependsOn tasks.shadowJar

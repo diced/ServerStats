@@ -10,6 +10,7 @@ public interface ServerStatsPlatform {
     ServerStatsType getType();
     String getVersion();
     String getAuthor();
+    ServerStats getServerStats();
     void infoLog(String msg);
 
     void start();

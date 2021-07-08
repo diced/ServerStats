@@ -84,6 +84,11 @@ public final class BungeeServerStats extends Plugin implements ServerStatsPlatfo
     }
 
     @Override
+    public ServerStats getServerStats() {
+        return this.serverStats;
+    }
+
+    @Override
     public void start() {
         TaskScheduler scheduler = this.getProxy().getScheduler();
 
