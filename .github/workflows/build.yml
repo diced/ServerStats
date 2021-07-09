@@ -7,6 +7,7 @@ on:
       - 'fabric/**'
       - 'common/**'
       - '.github/**'
+      - 'gradle*'
     branches: [ trunk ]
   pull_request:
     paths:
@@ -76,21 +77,38 @@ jobs:
           cd ./build && ls
           git init
           git remote add origin https://diced:${{ secrets.GITHUB_TOKEN }}@github.com/diced/ServerStats.git
-          git pull origin builds
+          mv build_artifacts ../build_artifacts
+      - name: Setup Git branch if stable
+        if: ${{ startsWith('refs/tags', github.ref) }}
+        run: |
+          cd ./build
           git checkout builds
-          cd ..
-      - name: Release Canary Build
+          mv ../build_artifacts build_artifacts
+      - name: Setup Git branch if dev
+        if: ${{ github.ref == 'refs/heads/trunk' }}
+        run: |
+          cd ./build
+          git checkout dev-builds
+          mv ../build_artifacts build_artifacts
+      - name: Release stable build
+        if: ${{ startsWith('refs/tags', github.ref) }}
         run: |
           cd ./build
           git add --all
-          beginswith() { case $2 in "$1"*) true;; *) false;; esac; }
           if [[ $(git diff --stat --staged) != '' ]]; then
-            if beginswith refs/tags "${{ github.ref }}"; then
-              git commit -m "Deploy [${{ needs.build.outputs.version }}] [${{ github.sha }}]"
-            else
-              git commit -m "Deploy [${{ needs.build.outputs.version }}] [${{ github.sha }}] [UNSTABLE]"
-            fi
+            git commit -m "Deploy [${{ needs.build.outputs.version }}] [${{ github.sha }}]"
             git push --force --set-upstream origin builds
+          else
+            echo "clean, not committing"
+          fi
+      - name: Release dev build
+        if: ${{ github.ref == 'refs/heads/trunk' }}
+        run: |
+          cd ./build
+          git add --all
+          if [[ $(git diff --stat --staged) != '' ]]; then
+            git commit -m "Deploy [${{ needs.build.outputs.version }}] [${{ github.sha }}]"
+            git push --force --set-upstream origin dev-builds
           else
             echo "clean, not committing"
           fi
