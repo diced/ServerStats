@@ -16,7 +16,7 @@ public class ToggleCommand extends Command {
 
     @Override
     public void execute(Context ctx) {
-        if (ctx.isOp()) {
+        if (!ctx.isOp()) {
             ctx.sendMessage(
                     join(
                             newline(),

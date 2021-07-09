@@ -6,6 +6,7 @@ import me.diced.serverstats.common.command.Context;
 import me.diced.serverstats.common.exporter.Stats;
 import net.kyori.adventure.text.format.NamedTextColor;
 
+import static me.diced.serverstats.common.Util.heatmapColor;
 import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static net.kyori.adventure.text.format.TextDecoration.*;
@@ -19,7 +20,7 @@ public class GetCommand extends Command {
     @Override
     public void execute(Context ctx) {
         Stats stats = this.serverStats.platform.getStats();
-        NamedTextColor color = ctx.heatmapColor(stats.tps, 50.0f);
+        NamedTextColor color = heatmapColor(stats.tps, 50.0f);
 
         ctx.sendMessage(
                 join(
