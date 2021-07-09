@@ -83,12 +83,14 @@ jobs:
         run: |
           cd ./build
           git checkout builds
+          git pull origin builds
           mv ../build_artifacts build_artifacts
       - name: Setup Git branch if dev
         if: ${{ github.ref == 'refs/heads/trunk' }}
         run: |
           cd ./build
-          git checkout -b dev-builds
+          git checkout dev-builds
+          git pull origin dev-builds
           mv ../build_artifacts build_artifacts
       - name: Release stable build
         if: ${{ startsWith('refs/tags', github.ref) }}
