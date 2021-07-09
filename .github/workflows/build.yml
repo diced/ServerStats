@@ -82,15 +82,15 @@ jobs:
         if: ${{ startsWith('refs/tags', github.ref) }}
         run: |
           cd ./build
-          git checkout builds
           git pull origin builds
+          git checkout builds
           mv ../build_artifacts build_artifacts
       - name: Setup Git branch if dev
         if: ${{ github.ref == 'refs/heads/trunk' }}
         run: |
           cd ./build
-          git checkout dev-builds
           git pull origin dev-builds
+          git checkout dev-builds
           mv ../build_artifacts build_artifacts
       - name: Release stable build
         if: ${{ startsWith('refs/tags', github.ref) }}
