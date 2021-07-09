@@ -5,6 +5,7 @@ import me.diced.serverstats.common.ServerStats;
 import me.diced.serverstats.common.ServerStatsPlatform;
 import me.diced.serverstats.common.ServerStatsType;
 import me.diced.serverstats.common.exporter.Stats;
+import me.diced.serverstats.common.scheduler.Scheduler;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginDescription;
 import net.md_5.bungee.api.plugin.PluginLogger;
@@ -19,16 +20,17 @@ import java.util.logging.Logger;
 
 public final class BungeeServerStats extends Plugin implements ServerStatsPlatform {
     private ServerStats serverStats;
+    private BungeeScheduler scheduler;
     private Logger logger = PluginLogger.getLogger("ServerStats");
     private PluginDescription meta = this.getDescription();
-    private ScheduledTask webTask;
-    private ScheduledTask statsTask;
 
     @Override
     public void onEnable() {
         try {
+            this.scheduler = new BungeeScheduler(this);
             this.serverStats = new ServerStats(this);
             new BungeeCommandExecutor(this);
+
             this.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -37,7 +39,7 @@ public final class BungeeServerStats extends Plugin implements ServerStatsPlatfo
 
     @Override
     public void onDisable() {
-        this.stop();
+        this.serverStats.stop();
     }
 
     @Override
@@ -89,27 +91,12 @@ public final class BungeeServerStats extends Plugin implements ServerStatsPlatfo
     }
 
     @Override
-    public void start() {
-        TaskScheduler scheduler = this.getProxy().getScheduler();
-
-        this.webTask = scheduler.runAsync(this, () -> {
-            this.serverStats.webServer.start();
-
-            String address = this.serverStats.webServer.addr.getHostName() + ":" + this.serverStats.webServer.addr.getPort();
-            this.infoLog("Started Prometheus Exporter on " + address);
-        });
-
-        this.serverStats.pushStats();
-        this.statsTask = scheduler.schedule(this, () -> this.serverStats.pushStats(), this.serverStats.config.interval, TimeUnit.MILLISECONDS);
+    public Scheduler getScheduler() {
+        return this.scheduler;
     }
 
     @Override
-    public void stop() {
-        this.webTask.cancel();
-        this.statsTask.cancel();
-    }
-
-    public boolean toggleInterval() {
-        return this.serverStats.toggleInterval();
+    public void start() {
+        this.serverStats.tasks.register();
     }
 }

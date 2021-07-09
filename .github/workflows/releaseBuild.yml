@@ -6,6 +6,8 @@ on:
 
 jobs:
   release:
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -41,3 +43,45 @@ jobs:
             builds/ServerStats-Bungee-${{ steps.version.outputs.version }}.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  upload-artifacts:
+    needs: release
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Git
+        run: |
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          mkdir build
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: build
+
+      - name: Setup git upload
+        run: |
+          cd ./build && ls
+          git init
+          git remote add origin https://diced:${{ secrets.GITHUB_TOKEN }}@github.com/diced/ServerStats.git
+          mv build_artifacts ../build_artifacts
+      - name: Setup Git branch if stable
+        run: |
+          cd ./build
+          git pull origin builds
+          git checkout builds
+          mv ../build_artifacts/* build_artifacts
+      - name: Release stable build
+        run: |
+          cd ./build
+          git add --all
+          if [[ $(git diff --stat --staged) != '' ]]; then
+            git commit -m "Deploy [${{ needs.release.outputs.version }}] [${{ github.sha }}]"
+            git push --force --set-upstream origin builds
+          else
+            echo "clean, not committing"
+          fi

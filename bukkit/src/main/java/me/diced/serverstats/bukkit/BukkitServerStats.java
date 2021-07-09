@@ -5,10 +5,10 @@ import me.diced.serverstats.common.ServerStats;
 import me.diced.serverstats.common.ServerStatsPlatform;
 import me.diced.serverstats.common.ServerStatsType;
 import me.diced.serverstats.common.exporter.Stats;
+import me.diced.serverstats.common.scheduler.Scheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,14 +18,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class BukkitServerStats extends JavaPlugin implements ServerStatsPlatform {
     private ServerStats serverStats;
+    private BukkitScheduler scheduler;
     private Logger logger = LoggerFactory.getLogger("ServerStats");
     private PluginDescriptionFile meta = this.getDescription();
-    private BukkitTask webTask;
-    private BukkitTask statsTask;
 
     @Override
     public final void onEnable() {
         try {
+            this.scheduler = new BukkitScheduler(this);
             this.serverStats = new ServerStats(this);
             new BukkitCommandExecutor(this);
             this.start();
@@ -36,7 +36,7 @@ public class BukkitServerStats extends JavaPlugin implements ServerStatsPlatform
 
     @Override
     public final void onDisable() {
-        this.stop();
+        this.serverStats.stop();
     }
 
     @Override
@@ -70,6 +70,11 @@ public class BukkitServerStats extends JavaPlugin implements ServerStatsPlatform
     }
 
     @Override
+    public Scheduler getScheduler() {
+        return this.scheduler;
+    }
+
+    @Override
     public Stats getStats() {
         Runtime runtime = Runtime.getRuntime();
 
@@ -94,25 +99,6 @@ public class BukkitServerStats extends JavaPlugin implements ServerStatsPlatform
 
     @Override
     public void start() {
-        this.webTask = Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            this.serverStats.webServer.start();
-
-            String address = this.serverStats.webServer.addr.getHostName() + ":" + this.serverStats.webServer.addr.getPort();
-            this.infoLog("Started Prometheus Exporter on " + address);
-        });
-
-        long time = (this.serverStats.config.interval / 1000) * 20;
-
-        this.statsTask = Bukkit.getScheduler().runTaskTimer(this, () -> this.serverStats.pushStats(), 0L, time);
-    }
-
-    @Override
-    public void stop() {
-        this.webTask.cancel();
-        this.statsTask.cancel();
-    }
-
-    public boolean toggleInterval() {
-        return this.serverStats.toggleInterval();
+        this.serverStats.tasks.register();
     }
 }

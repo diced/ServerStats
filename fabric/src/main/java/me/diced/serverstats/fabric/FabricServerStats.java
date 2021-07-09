@@ -5,6 +5,8 @@ import me.diced.serverstats.common.ServerStats;
 import me.diced.serverstats.common.ServerStatsPlatform;
 import me.diced.serverstats.common.ServerStatsType;
 import me.diced.serverstats.common.exporter.Stats;
+import me.diced.serverstats.common.scheduler.Scheduler;
+import me.diced.serverstats.common.scheduler.ThreadScheduler;
 import me.diced.serverstats.fabric.command.FabricCommandExecutor;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -22,17 +24,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class FabricServerStats implements ModInitializer, ServerStatsPlatform {
     private MinecraftServer server;
     private ServerStats serverStats;
-    private Thread statsThread;
-    private Thread webThread;
+    private ThreadScheduler scheduler;
     private ModMetadata meta = FabricLoader.getInstance().getModContainer("serverstats").get().getMetadata();
     private final Logger logger = LoggerFactory.getLogger("ServerStats");
-    private long next;
 
     @Override
     public void onInitialize() {
         try {
+            this.scheduler = new ThreadScheduler();
             this.serverStats = new ServerStats(this);
             new FabricCommandExecutor(this);
+
             this.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -93,34 +95,18 @@ public class FabricServerStats implements ModInitializer, ServerStatsPlatform {
     }
 
     @Override
+    public Scheduler getScheduler() {
+        return this.scheduler;
+    }
+
+    @Override
     public void start() {
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             this.server = server;
 
-            this.webThread = new Thread(() -> {
-                this.serverStats.webServer.start();
-
-                String address = this.serverStats.webServer.addr.getHostName() + ":" + this.serverStats.webServer.addr.getPort();
-                this.infoLog("Started Prometheus Exporter on " + address);
-            });
-            this.webThread.setName("ServerStats Exporter");
-            this.webThread.start();
-
-            this.statsThread = new Thread(() -> this.serverStats.startInterval());
-            this.statsThread.setName("ServerStats");
-            this.statsThread.start();
+            this.serverStats.tasks.register();
         });
 
-        ServerLifecycleEvents.SERVER_STOPPED.register(s -> this.stop());
-    }
-
-    @Override
-    public void stop() {
-        this.webThread.interrupt();
-        this.statsThread.interrupt();
-    }
-
-    public boolean toggleInterval() {
-        return this.serverStats.toggleInterval();
+        ServerLifecycleEvents.SERVER_STOPPED.register(s -> this.serverStats.stop());
     }
 }
