@@ -11,7 +11,7 @@ There's multiple places where you can download ServerStats
 * **[Website](https://serverstats.diced.me/download)** contains the builds from stable releases
 * **[GitHub Releases](https://github.com/diced/ServerStats/releases)** contains the builds from stable releases
 <br>
-(dl.diced.me/serverstats/latest](https://dl.diced.me/serverstats/latest))
+(*[dl.diced.me/serverstats/latest](https://dl.diced.me/serverstats/latest)*)
 
 ### Development Builds (Bleeding Edge)
 * **`dev-builds`** branch contains builds from every commit
