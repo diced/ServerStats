@@ -4,11 +4,17 @@ Visualize your Minecraft server statistics in realtime for Minecraft 1.8+ (*Only
 Want to learn more? Visit [serverstats.diced.me](https://serverstats.diced.me) for the latest downloads and documentation.
 
 ## Downloading
-There's 4 places you can download ServerStats
-* **Bleeding Edge Builds** - GitHub Actions build artifacts
-* **Bleeding Edge Builds 2** - `builds` branch
-* **Stable Build** - GitHub releases
-* **Official Website** - Offers stable & bleeding edge.
+There's multiple places where you can download ServerStats
+
+### Stable Builds
+* **`builds`** branch contains builds from every stable tag release
+* **[Website](https://serverstats.diced.me/download)** contains the builds from stable releases
+* **[GitHub Releases](https://github.com/diced/ServerStats/releases)** contains the builds from stable releases
+(*[https://dl.diced.me/serverstats/latest](https://dl.diced.me/serverstats/latest)*)
+
+### Development Builds (Bleeding Edge)
+* **`dev-builds`** branch contains builds from every commit
+* **GitHub Actions Artifacts** zip file containing jars from commit actions
 
 ## Features
 * Easy: setup ServerStats in minutes
