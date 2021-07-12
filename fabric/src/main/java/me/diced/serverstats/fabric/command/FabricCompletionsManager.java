@@ -11,6 +11,6 @@ public class FabricCompletionsManager extends CompletionsManager<SuggestionsBuil
 
     @Override
     public void suggest(String cmd) {
-        this.suggestor.suggest(cmd);
+        this.suggester.suggest(cmd);
     }
 }

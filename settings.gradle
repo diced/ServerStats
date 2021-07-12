@@ -16,5 +16,6 @@ include (
         'bukkit',
 
         // proxies
-        'bungee'
+        'bungee',
+        'velocity'
 )

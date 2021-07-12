@@ -4,13 +4,13 @@ plugins {
 
 archivesBaseName = 'ServerStats-Bungee'
 version = project.mod_version
-group = project.maven_group + '.bungee'
+group = project.mod_group + '.bungee'
 
 repositories {
    maven {
-        name = 'sonatype'
-        url = 'https://oss.sonatype.org/content/groups/public/'
-    }
+       name = 'sonatype'
+       url = 'https://oss.sonatype.org/content/groups/public/'
+   }
 }
 
 dependencies {
@@ -18,7 +18,7 @@ dependencies {
 
     compileOnly 'net.md-5:bungeecord-api:1.16-R0.4'
     implementation 'net.kyori:adventure-api:4.8.1'
-    implementation "net.kyori:adventure-platform-bungeecord:4.0.0-SNAPSHOT"
+    implementation 'net.kyori:adventure-platform-bungeecord:4.0.0-SNAPSHOT'
 }
 
 processResources {

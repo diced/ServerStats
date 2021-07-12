@@ -14,7 +14,6 @@ public class FabricContext implements Context {
         this.sender = sender;
     }
 
-
     public void sendMessage(Component message) {
         Text txt = Text.Serializer.fromJson(GsonComponentSerializer.gson().serialize(message));
 

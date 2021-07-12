@@ -7,12 +7,14 @@ import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.CommandSender;
 
 public class BungeeContext implements Context {
+    private final BungeeServerStats plugin;
     private final CommandSender sender;
     private final BungeeAudiences audiences;
 
     public BungeeContext(CommandSender sender, BungeeServerStats plugin) {
         this.sender = sender;
-        this.audiences = BungeeAudiences.create(plugin);
+        this.plugin = plugin;
+        this.audiences = BungeeAudiences.create(this.plugin);
     }
 
     public void sendMessage(Component message) {
@@ -20,6 +22,6 @@ public class BungeeContext implements Context {
     }
 
     public boolean isOp() {
-        return true;
+        return this.plugin.getProxy().getConsole().equals(this.sender);
     }
 }

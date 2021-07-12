@@ -19,7 +19,6 @@ public class ConfigLoader<T> {
                 .path(path)
                 .defaultOptions(opts -> opts.shouldCopyDefaults(true))
                 .build();
-
     }
 
     public T load() throws ConfigurateException {

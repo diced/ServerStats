@@ -1,13 +1,12 @@
 package me.diced.serverstats.bukkit;
 
 import me.diced.serverstats.bukkit.command.BukkitCommandExecutor;
-import me.diced.serverstats.common.ServerStats;
-import me.diced.serverstats.common.ServerStatsPlatform;
-import me.diced.serverstats.common.ServerStatsType;
+import me.diced.serverstats.common.plugin.ServerStats;
+import me.diced.serverstats.common.plugin.ServerStatsMetadata;
+import me.diced.serverstats.common.plugin.ServerStatsPlatform;
 import me.diced.serverstats.common.exporter.Stats;
 import me.diced.serverstats.common.scheduler.Scheduler;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BukkitServerStats extends JavaPlugin implements ServerStatsPlatform {
     private ServerStats serverStats;
     private BukkitScheduler scheduler;
-    private Logger logger = LoggerFactory.getLogger("ServerStats");
-    private PluginDescriptionFile meta = this.getDescription();
+    private final Logger logger = LoggerFactory.getLogger("ServerStats");
+    private final BukkitMetadata meta = new BukkitMetadata(this.getDescription());
 
     @Override
     public final void onEnable() {
@@ -50,18 +49,8 @@ public class BukkitServerStats extends JavaPlugin implements ServerStatsPlatform
     }
 
     @Override
-    public ServerStatsType getType() {
-        return ServerStatsType.BUKKIT;
-    }
-
-    @Override
-    public String getVersion() {
-        return this.meta.getVersion();
-    }
-
-    @Override
-    public String getAuthor() {
-        return this.meta.getAuthors().get(0);
+    public ServerStatsMetadata getMetadata() {
+        return this.meta;
     }
 
     @Override

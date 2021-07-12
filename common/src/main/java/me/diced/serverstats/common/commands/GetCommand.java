@@ -1,12 +1,12 @@
 package me.diced.serverstats.common.commands;
 
-import me.diced.serverstats.common.ServerStats;
+import me.diced.serverstats.common.plugin.ServerStats;
 import me.diced.serverstats.common.command.Command;
 import me.diced.serverstats.common.command.Context;
 import me.diced.serverstats.common.exporter.Stats;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-import static me.diced.serverstats.common.Util.heatmapColor;
+import static me.diced.serverstats.common.plugin.Util.heatmapColor;
 import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static net.kyori.adventure.text.format.TextDecoration.*;
@@ -14,7 +14,7 @@ import static net.kyori.adventure.text.format.Style.style;
 
 public class GetCommand extends Command {
     public GetCommand(ServerStats serverStats) {
-        super(serverStats);
+        super(serverStats, "get", "View current stats", false);
     }
 
     @Override

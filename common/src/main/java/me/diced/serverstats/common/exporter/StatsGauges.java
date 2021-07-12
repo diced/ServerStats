@@ -1,11 +1,11 @@
 package me.diced.serverstats.common.exporter;
 
 import io.prometheus.client.Gauge;
-import me.diced.serverstats.common.ServerStats;
+import me.diced.serverstats.common.plugin.ServerStats;
 import me.diced.serverstats.common.config.ServerStatsPushableConfig;
 
 public class StatsGauges {
-    private ServerStats serverStats;
+    private final ServerStats serverStats;
 
     private final Gauge playerCountGauge = Gauge.build()
             .name("player_count")

@@ -1,6 +1,7 @@
-package me.diced.serverstats.common;
+package me.diced.serverstats.common.plugin;
 
 import me.diced.serverstats.common.command.Command;
+import me.diced.serverstats.common.command.Context;
 import me.diced.serverstats.common.commands.GetCommand;
 import me.diced.serverstats.common.commands.HelpCommand;
 import me.diced.serverstats.common.commands.ToggleCommand;
@@ -11,11 +12,11 @@ import me.diced.serverstats.common.exporter.StatsGauges;
 import me.diced.serverstats.common.exporter.StatsWebServer;
 import me.diced.serverstats.common.scheduler.Scheduler;
 import me.diced.serverstats.common.scheduler.Task;
-import me.diced.serverstats.common.scheduler.ThreadScheduler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class ServerStats {
@@ -23,8 +24,8 @@ public class ServerStats {
     public ServerStatsConfig config;
     public ServerStatsTasks tasks;
     public ServerStatsPlatform platform;
+    public Map<String, Command> commands = new HashMap<>();
 
-    private HashMap<String, Command> commands = new HashMap<>();
     private boolean intervalRunning = true;
 
     public final StatsGauges gauges = new StatsGauges(this);
@@ -66,7 +67,10 @@ public class ServerStats {
     }
 
     public Command getCommand(String name) {
-        return this.commands.get(name);
+        Command cmd = this.commands.get(name);
+        if (cmd == null) cmd = this.commands.get("help");
+
+        return cmd;
     }
 
     public static class ServerStatsTasks {

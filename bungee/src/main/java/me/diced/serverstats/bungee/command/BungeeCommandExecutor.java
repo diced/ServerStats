@@ -1,7 +1,7 @@
 package me.diced.serverstats.bungee.command;
 
 import me.diced.serverstats.bungee.BungeeServerStats;
-import me.diced.serverstats.common.ServerStats;
+import me.diced.serverstats.common.plugin.ServerStats;
 import me.diced.serverstats.common.command.CommandExecutor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
@@ -10,10 +10,10 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.diced.serverstats.common.Util.tokenize;
+import static me.diced.serverstats.common.plugin.Util.tokenize;
 
 public class BungeeCommandExecutor extends Command implements CommandExecutor, TabExecutor {
-    private BungeeServerStats platform;
+    private final BungeeServerStats platform;
 
     public BungeeCommandExecutor(BungeeServerStats platform) {
         super("stats", null);
@@ -26,9 +26,10 @@ public class BungeeCommandExecutor extends Command implements CommandExecutor, T
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
         List<String> res = new ArrayList<>();
 
-        res.add("get");
-        res.add("push");
-        res.add("toggle");
+        BungeeContext ctx = new BungeeContext(sender, this.platform);
+        BungeeCompletionsManager completions = new BungeeCompletionsManager(res, ctx);
+
+        completions.registerProxy();
 
         return res;
     }

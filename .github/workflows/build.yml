@@ -29,7 +29,7 @@ jobs:
 
       - name: Get Version
         id: version
-        run: echo "::set-output name=version::$(cat gradle.properties | awk '/mod_version/ && sub(/^.{12}/,"",$0)')"
+        run: echo "::set-output name=version::$(cat gradle.properties | awk '/mod_version/ && sub(/^.{14}/,"",$0)')"
 
       - name: Set up JDK
         uses: actions/setup-java@v2
@@ -43,10 +43,10 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
 
       - name: Make build.sh executable
-        run: chmod +x ./build.sh
+        run: chmod +x ./scripts/build.sh
 
       - name: Build
-        run: ./build.sh
+        run: ./scripts/build.sh
 
       - uses: actions/upload-artifact@v2
         with:

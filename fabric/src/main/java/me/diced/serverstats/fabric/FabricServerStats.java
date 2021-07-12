@@ -1,9 +1,9 @@
 package me.diced.serverstats.fabric;
 
 import carpet.helpers.TickSpeed;
-import me.diced.serverstats.common.ServerStats;
-import me.diced.serverstats.common.ServerStatsPlatform;
-import me.diced.serverstats.common.ServerStatsType;
+import me.diced.serverstats.common.plugin.ServerStats;
+import me.diced.serverstats.common.plugin.ServerStatsMetadata;
+import me.diced.serverstats.common.plugin.ServerStatsPlatform;
 import me.diced.serverstats.common.exporter.Stats;
 import me.diced.serverstats.common.scheduler.Scheduler;
 import me.diced.serverstats.common.scheduler.ThreadScheduler;
@@ -11,7 +11,6 @@ import me.diced.serverstats.fabric.command.FabricCommandExecutor;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.MathHelper;
 import org.slf4j.Logger;
@@ -25,7 +24,7 @@ public class FabricServerStats implements ModInitializer, ServerStatsPlatform {
     private MinecraftServer server;
     private ServerStats serverStats;
     private ThreadScheduler scheduler;
-    private ModMetadata meta = FabricLoader.getInstance().getModContainer("serverstats").get().getMetadata();
+    private final FabricMetadata meta = new FabricMetadata();
     private final Logger logger = LoggerFactory.getLogger("ServerStats");
 
     @Override
@@ -47,28 +46,23 @@ public class FabricServerStats implements ModInitializer, ServerStatsPlatform {
     }
 
     @Override
-    public ServerStatsType getType() {
-        return ServerStatsType.FABRIC;
-    }
-
-    @Override
-    public String getVersion() {
-        return this.meta.getVersion().getFriendlyString();
-    }
-
-    @Override
-    public String getAuthor() {
-        return this.meta.getAuthors().stream().findFirst().get().getName();
-    }
-
-    @Override
-    public void infoLog(String msg) {
-        this.logger.info(msg);
+    public ServerStatsMetadata getMetadata() {
+        return this.meta;
     }
 
     @Override
     public ServerStats getServerStats() {
         return this.serverStats;
+    }
+
+    @Override
+    public Scheduler getScheduler() {
+        return this.scheduler;
+    }
+
+    @Override
+    public void infoLog(String msg) {
+        this.logger.info(msg);
     }
 
     @Override
@@ -92,11 +86,6 @@ public class FabricServerStats implements ModInitializer, ServerStatsPlatform {
         });
 
         return new Stats(playerCount, freeMemory, maxMemory, totalMemory, tps, mspt, loadedChunks, entityCount);
-    }
-
-    @Override
-    public Scheduler getScheduler() {
-        return this.scheduler;
     }
 
     @Override

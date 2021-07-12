@@ -1,7 +1,7 @@
 package me.diced.serverstats.bukkit.command;
 
 import me.diced.serverstats.bukkit.BukkitServerStats;
-import me.diced.serverstats.common.ServerStats;
+import me.diced.serverstats.common.plugin.ServerStats;
 import me.diced.serverstats.common.command.CommandExecutor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -14,18 +14,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.diced.serverstats.common.Util.tokenize;
+import static me.diced.serverstats.common.plugin.Util.tokenize;
 
 public class BukkitCommandExecutor implements CommandExecutor, TabExecutor, Listener {
-    private BukkitServerStats platform;
-    private PluginCommand command;
+    private final BukkitServerStats platform;
 
     public BukkitCommandExecutor(BukkitServerStats platform) {
         this.platform = platform;
-        this.command = platform.getCommand("stats");
+        PluginCommand command = platform.getCommand("stats");
 
-        this.command.setExecutor(this);
-        this.command.setTabCompleter(this);
+        command.setExecutor(this);
+        command.setTabCompleter(this);
 
         this.platform.getServer().getPluginManager().registerEvents(this, this.platform);
     }

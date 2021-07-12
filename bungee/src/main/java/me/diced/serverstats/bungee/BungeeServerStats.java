@@ -1,28 +1,24 @@
 package me.diced.serverstats.bungee;
 
 import me.diced.serverstats.bungee.command.BungeeCommandExecutor;
-import me.diced.serverstats.common.ServerStats;
-import me.diced.serverstats.common.ServerStatsPlatform;
-import me.diced.serverstats.common.ServerStatsType;
+import me.diced.serverstats.common.plugin.ServerStats;
+import me.diced.serverstats.common.plugin.ServerStatsMetadata;
+import me.diced.serverstats.common.plugin.ServerStatsPlatform;
 import me.diced.serverstats.common.exporter.Stats;
 import me.diced.serverstats.common.scheduler.Scheduler;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.api.plugin.PluginDescription;
 import net.md_5.bungee.api.plugin.PluginLogger;
-import net.md_5.bungee.api.scheduler.ScheduledTask;
-import net.md_5.bungee.api.scheduler.TaskScheduler;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 public final class BungeeServerStats extends Plugin implements ServerStatsPlatform {
     private ServerStats serverStats;
     private BungeeScheduler scheduler;
-    private Logger logger = PluginLogger.getLogger("ServerStats");
-    private PluginDescription meta = this.getDescription();
+    private final Logger logger = PluginLogger.getLogger("ServerStats");
+    private final BungeeMetadata meta = new BungeeMetadata(this.getDescription());
 
     @Override
     public void onEnable() {
@@ -48,6 +44,11 @@ public final class BungeeServerStats extends Plugin implements ServerStatsPlatfo
     }
 
     @Override
+    public ServerStatsMetadata getMetadata() {
+        return this.meta;
+    }
+
+    @Override
     public Stats getStats() {
         Runtime runtime = Runtime.getRuntime();
 
@@ -63,21 +64,6 @@ public final class BungeeServerStats extends Plugin implements ServerStatsPlatfo
         AtomicInteger entityCount = new AtomicInteger(0);
 
         return new Stats(playerCount, freeMemory, maxMemory, totalMemory, tps, mspt, loadedChunks, entityCount);
-    }
-
-    @Override
-    public ServerStatsType getType() {
-        return ServerStatsType.BUNGEE;
-    }
-
-    @Override
-    public String getVersion() {
-        return this.meta.getVersion();
-    }
-
-    @Override
-    public String getAuthor() {
-        return this.meta.getAuthor();
     }
 
     @Override

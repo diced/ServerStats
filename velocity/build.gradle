@@ -1,0 +1,35 @@
+plugins {
+    id 'net.kyori.blossom' version '1.2.0'
+    id 'com.github.johnrengelman.shadow'
+}
+
+archivesBaseName = 'ServerStats-Velocity'
+version = project.mod_version
+group = project.mod_group + '.velocity'
+
+repositories {
+    maven { url 'https://repo.velocitypowered.com/releases/' }
+}
+
+dependencies {
+    implementation project(':common')
+
+    compileOnly 'com.velocitypowered:velocity-api:1.1.5'
+    annotationProcessor 'com.velocitypowered:velocity-api:1.1.5'
+}
+
+blossom {
+    replaceToken '${version}', project.mod_version, 'src/main/java/me/diced/serverstats/velocity/VelocityServerStats.java'
+}
+
+shadowJar {
+    archiveClassifier.set(null)
+    minimize()
+
+    relocate 'io.prometheus.client', "${rootProject.group}.lib.io.prometheus.client"
+    relocate 'org.spongepowered.configurate', "${rootProject.group}.lib.org.spongepowered.configurate"
+    relocate 'org.checkerframework', "${rootProject.group}.lib.org.checkerframework"
+
+}
+
+tasks.build.dependsOn tasks.shadowJar

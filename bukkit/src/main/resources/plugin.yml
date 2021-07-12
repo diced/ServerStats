@@ -4,6 +4,7 @@ version: ${version}
 api-version: 1.13
 description: Visualize your Minecraft server statistics in realtime
 authors: [dicedtomato]
+website: https://serverstats.diced.me
 
 commands:
   stats:

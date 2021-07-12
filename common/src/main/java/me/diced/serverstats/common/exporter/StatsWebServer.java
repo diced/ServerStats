@@ -5,7 +5,6 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.exporter.common.TextFormat;
-import me.diced.serverstats.common.ServerStats;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -26,10 +25,6 @@ public class StatsWebServer {
 
     public void start() {
         this.server.start();
-    }
-
-    public void stop() {
-        this.server.stop(0);
     }
 
     private static class StatsMetricsHandler implements HttpHandler {

@@ -57,6 +57,7 @@
             }
           },
           "mappings": [],
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -203,6 +204,7 @@
           },
           "decimals": 0,
           "mappings": [],
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -854,7 +856,7 @@
     "list": []
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-2d",
     "to": "now"
   },
   "timepicker": {
@@ -875,5 +877,5 @@
   "timezone": "",
   "title": "Minecraft Stats",
   "uid": "GtgaQ1znk",
-  "version": 37
+  "version": 40
 }
