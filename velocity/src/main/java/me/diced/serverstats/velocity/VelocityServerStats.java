@@ -3,6 +3,7 @@ package me.diced.serverstats.velocity;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
@@ -12,6 +13,7 @@ import me.diced.serverstats.common.exporter.Stats;
 import me.diced.serverstats.common.plugin.ServerStats;
 import me.diced.serverstats.common.plugin.ServerStatsMetadata;
 import me.diced.serverstats.common.plugin.ServerStatsPlatform;
+import me.diced.serverstats.common.plugin.Util;
 import me.diced.serverstats.common.scheduler.Scheduler;
 
 import java.io.IOException;
@@ -51,6 +53,7 @@ public class VelocityServerStats implements ServerStatsPlatform {
             this.scheduler = new VelocityScheduler(this);
             this.serverStats = new ServerStats(this);
             new VelocityCommandExecutor(this);
+
             this.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -60,6 +63,11 @@ public class VelocityServerStats implements ServerStatsPlatform {
     @Subscribe
     public void onProxyShutdown(ProxyShutdownEvent event) {
         this.serverStats.stop();
+    }
+
+    @Subscribe
+    public void onLogin(ServerConnectedEvent event) {
+        this.serverStats.gauges.incPlayer(event.getPlayer().getUsername());
     }
 
     @Override
@@ -84,10 +92,12 @@ public class VelocityServerStats implements ServerStatsPlatform {
         // Proxy server does not have a tick system so we set it as 0
         double mspt = 0;
         double tps = 0;
+        double cpu = Util.cpuPercent();
+
         AtomicInteger loadedChunks = new AtomicInteger(0);
         AtomicInteger entityCount = new AtomicInteger(0);
 
-        return new Stats(playerCount, freeMemory, maxMemory, totalMemory, tps, mspt, loadedChunks, entityCount);
+        return new Stats(playerCount, freeMemory, maxMemory, totalMemory, tps, mspt, cpu, loadedChunks, entityCount);
     }
 
     @Override

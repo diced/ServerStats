@@ -41,6 +41,7 @@ jobs:
             builds/ServerStats-Fabric-${{ steps.version.outputs.version }}.jar
             builds/ServerStats-Bukkit-${{ steps.version.outputs.version }}.jar
             builds/ServerStats-Bungee-${{ steps.version.outputs.version }}.jar
+            builds/ServerStats-Velocity-${{ steps.version.outputs.version }}.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   upload-artifacts:

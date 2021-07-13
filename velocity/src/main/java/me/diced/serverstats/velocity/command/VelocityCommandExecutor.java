@@ -1,6 +1,5 @@
 package me.diced.serverstats.velocity.command;
 
-import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.RawCommand;
 import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import me.diced.serverstats.common.command.CommandExecutor;

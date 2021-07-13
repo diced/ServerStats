@@ -9,6 +9,7 @@ pluginManagement {
 }
 
 rootProject.name = 'serverstats'
+
 include (
         'common',
         // servers

@@ -9,6 +9,7 @@ public class Stats {
     public long totalMemory;
     public double tps;
     public double mspt;
+    public double cpu;
 
     public AtomicInteger loadedChunks;
     public AtomicInteger entityCount;
@@ -20,6 +21,7 @@ public class Stats {
             long totalMemory,
             double tps,
             double mspt,
+            double cpu,
             AtomicInteger loadedChunks,
             AtomicInteger entityCount
     ) {
@@ -29,6 +31,7 @@ public class Stats {
         this.totalMemory = totalMemory;
         this.tps = tps;
         this.mspt = mspt;
+        this.cpu = cpu;
         this.loadedChunks = loadedChunks;
         this.entityCount = entityCount;
     }

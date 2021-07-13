@@ -1,12 +1,16 @@
 package me.diced.serverstats.bukkit;
 
 import me.diced.serverstats.bukkit.command.BukkitCommandExecutor;
+import me.diced.serverstats.common.exporter.Stats;
 import me.diced.serverstats.common.plugin.ServerStats;
 import me.diced.serverstats.common.plugin.ServerStatsMetadata;
 import me.diced.serverstats.common.plugin.ServerStatsPlatform;
-import me.diced.serverstats.common.exporter.Stats;
+import me.diced.serverstats.common.plugin.Util;
 import me.diced.serverstats.common.scheduler.Scheduler;
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +19,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class BukkitServerStats extends JavaPlugin implements ServerStatsPlatform {
+public class BukkitServerStats extends JavaPlugin implements ServerStatsPlatform, Listener {
     private ServerStats serverStats;
     private BukkitScheduler scheduler;
     private final Logger logger = LoggerFactory.getLogger("ServerStats");
@@ -27,6 +31,8 @@ public class BukkitServerStats extends JavaPlugin implements ServerStatsPlatform
             this.scheduler = new BukkitScheduler(this);
             this.serverStats = new ServerStats(this);
             new BukkitCommandExecutor(this);
+
+            this.getServer().getPluginManager().registerEvents(this, this);
             this.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -74,6 +80,7 @@ public class BukkitServerStats extends JavaPlugin implements ServerStatsPlatform
 
         double mspt = Bukkit.getAverageTickTime();
         double tps = Bukkit.getTPS()[0];
+        double cpu = Util.cpuPercent();
 
         AtomicInteger loadedChunks = new AtomicInteger();
         AtomicInteger entityCount = new AtomicInteger();
@@ -83,11 +90,16 @@ public class BukkitServerStats extends JavaPlugin implements ServerStatsPlatform
             sw.getEntities().forEach(entity -> entityCount.getAndIncrement());
         });
 
-        return new Stats(playerCount, freeMemory, maxMemory, totalMemory, tps, mspt, loadedChunks, entityCount);
+        return new Stats(playerCount, freeMemory, maxMemory, totalMemory, tps, mspt, cpu, loadedChunks, entityCount);
     }
 
     @Override
     public void start() {
         this.serverStats.tasks.register();
+    }
+
+    @EventHandler
+    public void onLogin(PlayerJoinEvent event) {
+        this.serverStats.gauges.incPlayer(event.getPlayer().getName());
     }
 }

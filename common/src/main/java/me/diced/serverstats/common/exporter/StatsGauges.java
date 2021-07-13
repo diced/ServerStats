@@ -1,8 +1,14 @@
 package me.diced.serverstats.common.exporter;
 
+import io.prometheus.client.Counter;
 import io.prometheus.client.Gauge;
 import me.diced.serverstats.common.plugin.ServerStats;
 import me.diced.serverstats.common.config.ServerStatsPushableConfig;
+
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class StatsGauges {
     private final ServerStats serverStats;
@@ -39,6 +45,12 @@ public class StatsGauges {
             .name("mspt")
             .help("ms per tick")
             .register();
+    private final Gauge cpuGauge = Gauge.build()
+            .name("cpu")
+            .help("server process cpu percentage")
+            .register();
+
+    private final Map<String, AtomicInteger> playerLogins = new HashMap<>();
 
     public StatsGauges(ServerStats serverStats) {
         this.serverStats = serverStats;
@@ -55,5 +67,27 @@ public class StatsGauges {
         if (conf.entityCount) this.entityCountGauge.set(stats.entityCount.intValue());
         if (conf.tps) this.tpsGauge.set(stats.tps);
         if (conf.mspt) this.msptGauge.set(stats.mspt);
+        if (conf.cpu) this.cpuGauge.set(stats.cpu);
+    }
+
+    public String playerCounter() {
+        StringWriter writer = new StringWriter();
+
+        writer.write("# TYPE player_logins counter\n");
+        writer.write("# HELP player_logins player logins\n");
+        for (Map.Entry<String, AtomicInteger> entry : this.playerLogins.entrySet()) {
+            writer.write(String.format("player_logins{player=\"%s\"} %d", entry.getKey(), entry.getValue().intValue()) + "\n");
+        }
+
+        return writer.toString();
+    }
+
+    public void incPlayer(String player) {
+        if (!this.playerLogins.containsKey(player)) {
+            this.playerLogins.put(player, new AtomicInteger(1));
+        } else {
+            AtomicInteger in = this.playerLogins.get(player);
+            in.getAndIncrement();
+        }
     }
 }

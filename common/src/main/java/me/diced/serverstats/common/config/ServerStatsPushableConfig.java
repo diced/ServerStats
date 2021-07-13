@@ -10,6 +10,7 @@ public class ServerStatsPushableConfig {
     public boolean totalMemory = true;
     public boolean tps = true;
     public boolean mspt = true;
+    public boolean cpu = true;
     public boolean loadedChunks = true;
     public boolean entityCount = true;
 }

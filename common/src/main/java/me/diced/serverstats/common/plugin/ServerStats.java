@@ -36,7 +36,7 @@ public class ServerStats {
         ConfigLoader<ServerStatsConfig> configLoader = new ConfigLoader<>(ServerStatsConfig.class, this.platform.getConfigPath());
         this.config = configLoader.load();
 
-        this.webServer = new StatsWebServer(new InetSocketAddress(this.config.webServer.hostname, this.config.webServer.port), this.config.webServer.route);
+        this.webServer = new StatsWebServer(new InetSocketAddress(this.config.webServer.hostname, this.config.webServer.port), this.config.webServer.route, this.gauges);
 
         this.tasks = new ServerStatsTasks(this, platform.getScheduler());
 

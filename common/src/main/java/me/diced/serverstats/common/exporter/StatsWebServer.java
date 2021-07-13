@@ -14,10 +14,12 @@ import java.net.InetSocketAddress;
 public class StatsWebServer {
     private final HttpServer server;
     public final InetSocketAddress addr;
+    private final StatsGauges gauges;
 
-    public StatsWebServer(InetSocketAddress addr, String route) throws IOException {
+    public StatsWebServer(InetSocketAddress addr, String route, StatsGauges gauges) throws IOException {
         this.server = HttpServer.create(addr, 0);
         this.addr = addr;
+        this.gauges = gauges;
 
         this.server.createContext(route, new StatsMetricsHandler());
         this.server.setExecutor(null);
@@ -27,12 +29,14 @@ public class StatsWebServer {
         this.server.start();
     }
 
-    private static class StatsMetricsHandler implements HttpHandler {
+    private class StatsMetricsHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             StringWriter writer = new StringWriter();
 
-            TextFormat.writeFormat(TextFormat.CONTENT_TYPE_004, writer, CollectorRegistry.defaultRegistry.metricFamilySamples());
+            writer.write(gauges.playerCounter()); // custom
+
+            TextFormat.writeOpenMetrics100(writer, CollectorRegistry.defaultRegistry.metricFamilySamples());
             String metrics = writer.toString();
 
             OutputStream os = exchange.getResponseBody();

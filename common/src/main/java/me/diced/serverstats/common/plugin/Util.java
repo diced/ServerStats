@@ -1,7 +1,9 @@
 package me.diced.serverstats.common.plugin;
 
+import com.sun.management.OperatingSystemMXBean;
 import net.kyori.adventure.text.format.NamedTextColor;
 
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,6 +14,9 @@ public class Util {
     }
     public static List<String> tokenize(String[] strings) {
         return Arrays.asList(strings);
+    }
+    public static double cpuPercent() {
+        return ((OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getProcessCpuLoad() * 100;
     }
     public static NamedTextColor heatmapColor(double actual, double reference) { // from carpet mod Messenger class
         NamedTextColor color = NamedTextColor.GRAY;
