@@ -3,6 +3,8 @@ Visualize your Minecraft server statistics in realtime for Minecraft 1.8+ (*Only
 
 Want to learn more? Visit [serverstats.diced.me](https://serverstats.diced.me) for the latest downloads and documentation.
 
+![Grafana Dashboard Example](https://raw.githubusercontent.com/diced/serverstats/trunk/example-grafana-dashboard.png)
+
 ## Downloading
 There's multiple places where you can download ServerStats
 
@@ -34,5 +36,5 @@ cd ServerStats
 ## Project Layout
 ServerStats utilizes mono-repos/modules to have different server types in one repo.
 
-* **Common** - Common modules with interfaces and abstract classes that bukkit/bungee/fabric use
-* **Bukkit/Bungee/Fabric** - Uses the common module's interfaces to implement a platform specific plugin
+* **Common** - Common modules with interfaces and abstract classes that bukkit/bungee/fabric/velocity use
+* **Bukkit/Bungee/Fabric/Velocity** - Uses the common module's interfaces to implement a platform specific plugin
