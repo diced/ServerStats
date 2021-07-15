@@ -4,7 +4,6 @@ import me.diced.serverstats.common.prometheus.MetricsManager;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -12,7 +11,7 @@ public class BukkitMetricsManager extends MetricsManager {
     private final BukkitServerStats platform;
 
     public BukkitMetricsManager(BukkitServerStats platform) {
-        super(platform.getServerStats().config);
+        super(platform.getServerStats());
         this.platform = platform;
     }
 

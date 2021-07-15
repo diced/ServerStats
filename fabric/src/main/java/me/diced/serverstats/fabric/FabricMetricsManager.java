@@ -13,7 +13,7 @@ public class FabricMetricsManager extends MetricsManager {
     private final FabricServerStats platform;
 
     public FabricMetricsManager(FabricServerStats platform) {
-        super(platform.getServerStats().config);
+        super(platform.getServerStats());
         this.platform = platform;
     }
 

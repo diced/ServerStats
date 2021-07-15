@@ -6,7 +6,7 @@ public class VelocityMetricsManager extends MetricsManager {
     private final VelocityServerStats platform;
 
     public VelocityMetricsManager(VelocityServerStats platform) {
-        super(platform.getServerStats().config);
+        super(platform.getServerStats());
         this.platform = platform;
     }
 

@@ -6,7 +6,7 @@ public class BungeeMetricsManager extends MetricsManager {
     private final BungeeServerStats platform;
 
     public BungeeMetricsManager(BungeeServerStats platform) {
-        super(platform.getServerStats().config);
+        super(platform.getServerStats());
         this.platform = platform;
     }
 
