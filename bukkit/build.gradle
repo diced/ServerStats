@@ -32,7 +32,6 @@ shadowJar {
     minimize()
 
     relocate 'org.slf4j', "${rootProject.group}.lib.org.slf4j"
-    relocate 'io.prometheus.client', "${rootProject.group}.lib.io.prometheus.client"
     relocate 'org.spongepowered.configurate', "${rootProject.group}.lib.org.spongepowered.configurate"
     relocate 'org.checkerframework', "${rootProject.group}.lib.org.checkerframework"
     relocate 'net.kyori.adventure', "${rootProject.group}.lib.adventure"

@@ -13,4 +13,10 @@ public enum ServerStatsType {
         else if (this == VELOCITY) return "Velocity";
         else return "Bukkit";
     }
+
+    public boolean isProxy() {
+        if (this == BUNGEE) return true;
+        else if (this == VELOCITY) return true;
+        else return false;
+    }
 }

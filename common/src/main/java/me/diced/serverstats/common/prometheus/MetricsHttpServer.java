@@ -1,25 +1,20 @@
-package me.diced.serverstats.common.exporter;
+package me.diced.serverstats.common.prometheus;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import io.prometheus.client.CollectorRegistry;
-import io.prometheus.client.exporter.common.TextFormat;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.StringWriter;
 import java.net.InetSocketAddress;
 
-public class StatsWebServer {
+public class MetricsHttpServer {
     private final HttpServer server;
     public final InetSocketAddress addr;
-    private final StatsGauges gauges;
 
-    public StatsWebServer(InetSocketAddress addr, String route, StatsGauges gauges) throws IOException {
+    public MetricsHttpServer(InetSocketAddress addr, String route) throws IOException {
         this.server = HttpServer.create(addr, 0);
         this.addr = addr;
-        this.gauges = gauges;
 
         this.server.createContext(route, new StatsMetricsHandler());
         this.server.setExecutor(null);
@@ -29,15 +24,10 @@ public class StatsWebServer {
         this.server.start();
     }
 
-    private class StatsMetricsHandler implements HttpHandler {
+    private static class StatsMetricsHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            StringWriter writer = new StringWriter();
-
-            writer.write(gauges.playerCounter()); // custom
-
-            TextFormat.writeOpenMetrics100(writer, CollectorRegistry.defaultRegistry.metricFamilySamples());
-            String metrics = writer.toString();
+            String metrics = MetricsExporter.export();
 
             OutputStream os = exchange.getResponseBody();
             exchange.sendResponseHeaders(200, metrics.length());

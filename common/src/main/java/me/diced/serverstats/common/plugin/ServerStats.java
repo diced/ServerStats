@@ -1,15 +1,13 @@
 package me.diced.serverstats.common.plugin;
 
 import me.diced.serverstats.common.command.Command;
-import me.diced.serverstats.common.command.Context;
 import me.diced.serverstats.common.commands.GetCommand;
 import me.diced.serverstats.common.commands.HelpCommand;
 import me.diced.serverstats.common.commands.ToggleCommand;
 import me.diced.serverstats.common.commands.PushCommand;
 import me.diced.serverstats.common.config.ConfigLoader;
 import me.diced.serverstats.common.config.ServerStatsConfig;
-import me.diced.serverstats.common.exporter.StatsGauges;
-import me.diced.serverstats.common.exporter.StatsWebServer;
+import me.diced.serverstats.common.prometheus.MetricsHttpServer;
 import me.diced.serverstats.common.scheduler.Scheduler;
 import me.diced.serverstats.common.scheduler.Task;
 
@@ -20,7 +18,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class ServerStats {
-    public StatsWebServer webServer;
+    public MetricsHttpServer webServer;
     public ServerStatsConfig config;
     public ServerStatsTasks tasks;
     public ServerStatsPlatform platform;
@@ -28,15 +26,14 @@ public class ServerStats {
 
     private boolean intervalRunning = true;
 
-    public final StatsGauges gauges = new StatsGauges(this);
-
     public ServerStats(ServerStatsPlatform platform) throws IOException {
         this.platform = platform;
 
         ConfigLoader<ServerStatsConfig> configLoader = new ConfigLoader<>(ServerStatsConfig.class, this.platform.getConfigPath());
+
         this.config = configLoader.load();
 
-        this.webServer = new StatsWebServer(new InetSocketAddress(this.config.webServer.hostname, this.config.webServer.port), this.config.webServer.route, this.gauges);
+        this.webServer = new MetricsHttpServer(new InetSocketAddress(this.config.webServer.hostname, this.config.webServer.port), this.config.webServer.route);
 
         this.tasks = new ServerStatsTasks(this, platform.getScheduler());
 
@@ -48,7 +45,7 @@ public class ServerStats {
 
     public void pushStats() {
         if (this.intervalRunning) {
-            this.gauges.setValues(this.config.pushable);
+            this.platform.getMetricsManager().push();
 
             if (this.config.logs.writeLogs) {
                 this.platform.infoLog(this.config.logs.writeLog);

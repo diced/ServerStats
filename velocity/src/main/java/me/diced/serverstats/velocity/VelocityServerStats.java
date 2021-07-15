@@ -1,24 +1,20 @@
 package me.diced.serverstats.velocity;
 
 import com.google.inject.Inject;
-import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
-import me.diced.serverstats.common.exporter.Stats;
+import me.diced.serverstats.common.prometheus.MetricsManager;
 import me.diced.serverstats.common.plugin.ServerStats;
 import me.diced.serverstats.common.plugin.ServerStatsMetadata;
 import me.diced.serverstats.common.plugin.ServerStatsPlatform;
-import me.diced.serverstats.common.plugin.Util;
 import me.diced.serverstats.common.scheduler.Scheduler;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import me.diced.serverstats.velocity.command.VelocityCommandExecutor;
 import org.slf4j.Logger;
@@ -34,6 +30,7 @@ public class VelocityServerStats implements ServerStatsPlatform {
     private ServerStats serverStats;
     private VelocityScheduler scheduler;
     private VelocityMetadata meta;
+    private VelocityMetricsManager metricsManager;
     private final Logger logger;
     private final Path dataDirectory;
     public final ProxyServer server;
@@ -48,6 +45,7 @@ public class VelocityServerStats implements ServerStatsPlatform {
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
         this.meta = new VelocityMetadata(server.getPluginManager().getPlugin("serverstats").get().getDescription());
+        this.metricsManager = new VelocityMetricsManager(this);
 
         try {
             this.scheduler = new VelocityScheduler(this);
@@ -65,11 +63,6 @@ public class VelocityServerStats implements ServerStatsPlatform {
         this.serverStats.stop();
     }
 
-    @Subscribe
-    public void onLogin(ServerConnectedEvent event) {
-        this.serverStats.gauges.incPlayer(event.getPlayer().getUsername());
-    }
-
     @Override
     public Path getConfigPath() {
         return this.dataDirectory.resolve("serverstats.conf");
@@ -81,23 +74,13 @@ public class VelocityServerStats implements ServerStatsPlatform {
     }
 
     @Override
-    public Stats getStats() {
-        Runtime runtime = Runtime.getRuntime();
+    public Scheduler getScheduler() {
+        return this.scheduler;
+    }
 
-        int playerCount = this.server.getPlayerCount();
-        long freeMemory = runtime.freeMemory();
-        long maxMemory = runtime.maxMemory();
-        long totalMemory = runtime.totalMemory();
-
-        // Proxy server does not have a tick system so we set it as 0
-        double mspt = 0;
-        double tps = 0;
-        double cpu = Util.cpuPercent();
-
-        AtomicInteger loadedChunks = new AtomicInteger(0);
-        AtomicInteger entityCount = new AtomicInteger(0);
-
-        return new Stats(playerCount, freeMemory, maxMemory, totalMemory, tps, mspt, cpu, loadedChunks, entityCount);
+    @Override
+    public MetricsManager getMetricsManager() {
+        return this.metricsManager;
     }
 
     @Override
@@ -108,11 +91,6 @@ public class VelocityServerStats implements ServerStatsPlatform {
     @Override
     public ServerStats getServerStats() {
         return this.serverStats;
-    }
-
-    @Override
-    public Scheduler getScheduler() {
-        return this.scheduler;
     }
 
     @Override

@@ -13,4 +13,5 @@ public class ServerStatsPushableConfig {
     public boolean cpu = true;
     public boolean loadedChunks = true;
     public boolean entityCount = true;
+    public boolean diskSpace = true;
 }

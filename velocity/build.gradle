@@ -26,7 +26,6 @@ shadowJar {
     archiveClassifier.set(null)
     minimize()
 
-    relocate 'io.prometheus.client', "${rootProject.group}.lib.io.prometheus.client"
     relocate 'org.spongepowered.configurate', "${rootProject.group}.lib.org.spongepowered.configurate"
     relocate 'org.checkerframework', "${rootProject.group}.lib.org.checkerframework"
 

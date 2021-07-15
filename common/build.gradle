@@ -1,9 +1,4 @@
 dependencies {
-    // prometheus
-    implementation 'io.prometheus:simpleclient:0.10.0'
-    implementation 'io.prometheus:simpleclient_httpserver:0.10.0'
-    implementation 'io.prometheus:simpleclient_servlet:0.11.0'
-
     implementation 'org.spongepowered:configurate-hocon:4.0.0'
     implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
     implementation 'net.kyori:adventure-api:4.8.1'
