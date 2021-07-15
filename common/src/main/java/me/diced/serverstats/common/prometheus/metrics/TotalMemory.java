@@ -26,7 +26,7 @@ public class TotalMemory extends Metric<AtomicLong> {
 
     @Override
     public String formatPrometheus() {
-        return String.format("%s %d", this.name, this.collector.intValue());
+        return String.format("%s %d", this.name, this.collector.longValue());
     }
 
     @Override
