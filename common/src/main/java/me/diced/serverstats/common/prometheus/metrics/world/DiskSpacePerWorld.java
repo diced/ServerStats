@@ -10,11 +10,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static me.diced.serverstats.common.plugin.Util.formatBytes;
 import static me.diced.serverstats.common.plugin.Util.getDirectorySize;
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
-import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
 public class DiskSpacePerWorld extends Metric<TreeMap<String, Long>> {
 
@@ -25,6 +21,7 @@ public class DiskSpacePerWorld extends Metric<TreeMap<String, Long>> {
     @Override
     public void run() {
         for (Map.Entry<String, Path> entry : this.manager.getWorldPaths().entrySet()) {
+            System.out.println(entry.getValue());
             try {
                 this.collector.put(entry.getKey(), getDirectorySize(entry.getValue()));
             } catch (IOException e) {

@@ -64,8 +64,10 @@ public class Util {
         public long size = 0;
 
         @Override
-        public FileVisitResult visitFile(Path _0, BasicFileAttributes attr) {
-            size += attr.size();
+        public FileVisitResult visitFile(Path path, BasicFileAttributes attr) {
+            if (!path.getFileName().startsWith("DIM")) {
+                size += attr.size();
+            }
 
             return CONTINUE;
         }

@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class FabricServerStats implements ModInitializer, ServerStatsPlatform {
     public MinecraftServer server;
@@ -88,6 +89,14 @@ public class FabricServerStats implements ModInitializer, ServerStatsPlatform {
             case "the_nether" -> "world_the_nether";
             case "the_end" -> "world_the_end";
             default -> "world";
+        };
+    }
+
+    public Path levelNameToPath(ServerWorld world) {
+        return switch (this.getLevelName(world)) {
+            case "world_the_nether" -> Paths.get(".", "world", "DIM-1");
+            case "world_the_end" ->  Paths.get(".", "world", "DIM1");
+            default -> Paths.get(".", "world");
         };
     }
 }

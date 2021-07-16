@@ -77,10 +77,7 @@ public class FabricMetricsManager extends MetricsManager {
     public TreeMap<String, Path> getWorldPaths() {
         TreeMap<String, Path> paths = new TreeMap<>();
 
-        this.platform.server.getWorlds().forEach(w -> {
-            String p = this.platform.getLevelName(w);
-            paths.put(p, Paths.get(".", p));
-        });
+        this.platform.server.getWorlds().forEach(w -> paths.put(this.platform.getLevelName(w), this.platform.levelNameToPath(w)));
 
         return paths;
     }
