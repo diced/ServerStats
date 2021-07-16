@@ -9,11 +9,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.FileVisitResult.*;
 
 public class Util {
     public static String[] units = new String[] {"B", "kB", "MB", "GB", "TB", "PB" };
@@ -41,7 +40,7 @@ public class Util {
     }
 
     public static long getDirectorySize(Path path) throws IOException {
-        DirectoryReader reader = new DirectoryReader();
+        DirectoryReader reader = new DirectoryReader(path);
         Files.walkFileTree(path, reader);
 
         return reader.size;
@@ -62,13 +61,21 @@ public class Util {
 
     private static class DirectoryReader extends SimpleFileVisitor<Path> {
         public long size = 0;
+        private final Path root;
+
+        public DirectoryReader(Path root) {
+            this.root = root;
+        }
+
+        @Override
+        public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attr) {
+            if (!path.equals(this.root) && path.getFileName().toString().startsWith("DIM")) return SKIP_SUBTREE;
+            return CONTINUE;
+        }
 
         @Override
         public FileVisitResult visitFile(Path path, BasicFileAttributes attr) {
-            if (!path.getFileName().startsWith("DIM")) {
-                size += attr.size();
-            }
-
+            size += attr.size();
             return CONTINUE;
         }
     }

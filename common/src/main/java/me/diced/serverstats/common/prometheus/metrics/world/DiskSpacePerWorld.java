@@ -21,7 +21,6 @@ public class DiskSpacePerWorld extends Metric<TreeMap<String, Long>> {
     @Override
     public void run() {
         for (Map.Entry<String, Path> entry : this.manager.getWorldPaths().entrySet()) {
-            System.out.println(entry.getValue());
             try {
                 this.collector.put(entry.getKey(), getDirectorySize(entry.getValue()));
             } catch (IOException e) {
