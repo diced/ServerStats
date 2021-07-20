@@ -47,7 +47,7 @@ Loaded chunks in each world
 ### Entity Count `entity-count`
 Entity count in each world
 ### Disk Space used `disk-space`
-Dick space that each world is using
+Disk space that each world is using
 ### Packets Sent/Read `packets`
 Packets that are being sent to clients and being read from clients
 ### Garbage Collection Time `gc`
