@@ -7,6 +7,7 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import me.diced.serverstats.common.plugin.LogWrapper;
 import me.diced.serverstats.common.prometheus.MetricsManager;
 import me.diced.serverstats.common.plugin.ServerStats;
 import me.diced.serverstats.common.plugin.ServerStatsMetadata;
@@ -18,6 +19,7 @@ import java.nio.file.Path;
 
 import me.diced.serverstats.velocity.command.VelocityCommandExecutor;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Plugin(id = "serverstats",
         name = "ServerStats",
@@ -31,14 +33,25 @@ public class VelocityServerStats implements ServerStatsPlatform {
     private VelocityScheduler scheduler;
     private VelocityMetadata meta;
     private VelocityMetricsManager metricsManager;
-    private final Logger logger;
+    private final LogWrapper logger;
     private final Path dataDirectory;
     public final ProxyServer server;
 
     @Inject
     public VelocityServerStats(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
         this.server = server;
-        this.logger = logger;
+        this.logger = new LogWrapper() {
+            @Override
+            public void info(String msg) {
+                logger.info(msg);
+            }
+
+            @Override
+            public void error(String msg) {
+                logger.error(msg);
+            }
+        };
+
         this.dataDirectory = dataDirectory;
     }
 
@@ -49,7 +62,7 @@ public class VelocityServerStats implements ServerStatsPlatform {
 
         try {
             this.scheduler = new VelocityScheduler(this);
-            this.serverStats = new ServerStats(this);
+            this.serverStats = new ServerStats(this, this.logger);
             new VelocityCommandExecutor(this);
 
             this.start();
@@ -81,11 +94,6 @@ public class VelocityServerStats implements ServerStatsPlatform {
     @Override
     public MetricsManager getMetricsManager() {
         return this.metricsManager;
-    }
-
-    @Override
-    public void infoLog(String msg) {
-        this.logger.info(msg);
     }
 
     @Override

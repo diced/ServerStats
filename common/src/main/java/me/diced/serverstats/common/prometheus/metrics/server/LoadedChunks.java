@@ -1,4 +1,4 @@
-package me.diced.serverstats.common.prometheus.metrics;
+package me.diced.serverstats.common.prometheus.metrics.server;
 
 import me.diced.serverstats.common.prometheus.Metric;
 import me.diced.serverstats.common.prometheus.MetricsManager;

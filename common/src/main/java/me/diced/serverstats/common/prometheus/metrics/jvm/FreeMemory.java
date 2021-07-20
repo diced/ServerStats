@@ -1,4 +1,4 @@
-package me.diced.serverstats.common.prometheus.metrics;
+package me.diced.serverstats.common.prometheus.metrics.jvm;
 
 import me.diced.serverstats.common.prometheus.Metric;
 import me.diced.serverstats.common.prometheus.MetricsManager;
@@ -11,9 +11,9 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
-public class MaxMemory extends Metric<AtomicLong> {
+public class FreeMemory extends Metric<AtomicLong> {
 
-    public MaxMemory(String name, MetricsManager manager) {
+    public FreeMemory(String name, MetricsManager manager) {
         super(name, "gauge", manager, new AtomicLong());
     }
 
@@ -21,7 +21,7 @@ public class MaxMemory extends Metric<AtomicLong> {
     public void run() {
         Runtime runtime = Runtime.getRuntime();
 
-        this.collector.set(runtime.maxMemory());
+        this.collector.set(runtime.freeMemory());
     }
 
     @Override
@@ -31,11 +31,11 @@ public class MaxMemory extends Metric<AtomicLong> {
 
     @Override
     public Component formatComponent() {
-        return text().append(text("Max Memory: ", GOLD)).append(text(formatBytes(this.collector.longValue()), WHITE)).asComponent();
+        return text().append(text("Free Memory: ", GOLD)).append(text(formatBytes(this.collector.longValue()), WHITE)).asComponent();
     }
 
     @Override
     public boolean enabled() {
-        return this.manager.config.pushable.maxMemory;
+        return this.manager.config.pushable.freeMemory;
     }
 }

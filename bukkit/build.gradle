@@ -8,12 +8,15 @@ group = project.mod_group + '.bukkit'
 
 repositories {
     maven { url 'https://papermc.io/repo/repository/maven-public/' }
+    maven { url "https://repo.dmulloy2.net/repository/public/" }
 }
 
 dependencies {
     implementation project(':common')
 
     compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
+
+    compileOnly 'com.comphenix.protocol:ProtocolLib:4.7.0'
     implementation 'org.slf4j:slf4j-jdk14:1.7.30'
     implementation 'net.kyori:adventure-api:4.8.1'
     implementation 'net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT'

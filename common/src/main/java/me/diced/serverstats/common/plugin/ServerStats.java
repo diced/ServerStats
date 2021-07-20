@@ -13,7 +13,9 @@ import me.diced.serverstats.common.scheduler.Task;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -22,12 +24,14 @@ public class ServerStats {
     public ServerStatsConfig config;
     public ServerStatsTasks tasks;
     public ServerStatsPlatform platform;
+    public LogWrapper logger;
     public Map<String, Command> commands = new HashMap<>();
 
     private boolean intervalRunning = true;
 
-    public ServerStats(ServerStatsPlatform platform) throws IOException {
+    public ServerStats(ServerStatsPlatform platform, LogWrapper logger) throws IOException {
         this.platform = platform;
+        this.logger = logger;
 
         ConfigLoader<ServerStatsConfig> configLoader = new ConfigLoader<>(ServerStatsConfig.class, this.platform.getConfigPath());
 
@@ -48,13 +52,13 @@ public class ServerStats {
             this.platform.getMetricsManager().push();
 
             if (this.config.logs.writeLogs) {
-                this.platform.infoLog(this.config.logs.writeLog);
+                this.logger.info(this.config.logs.writeLog);
             }
         }
     }
 
     public void stop() {
-        this.platform.infoLog("Stopping ServerStats-Worker");
+        this.logger.info("Stopping ServerStats-Worker");
         this.tasks.stop();
     }
 
@@ -71,8 +75,7 @@ public class ServerStats {
     }
 
     public static class ServerStatsTasks {
-        private Task webTask;
-        private Task statsTask;
+        private final List<Task> tasks = new ArrayList<>();
         private final ServerStats serverStats;
         private final Scheduler scheduler;
 
@@ -82,20 +85,24 @@ public class ServerStats {
         }
 
         public void register() {
-            this.webTask = this.scheduler.schedule(() -> {
+            this.serverStats.logger.info("Starting ServerStats-Worker tasks");
+
+            var webTask = this.scheduler.schedule(() -> {
                 this.serverStats.webServer.start();
 
                 String address = this.serverStats.webServer.addr.getHostName() + ":" + this.serverStats.webServer.addr.getPort();
-                this.serverStats.platform.infoLog("Started Prometheus Exporter on " + address);
+                this.serverStats.logger.info("Started Prometheus Exporter on " + address);
             });
 
             this.serverStats.pushStats();
-            this.statsTask = this.scheduler.scheduleRepeatingTask(() -> this.serverStats.pushStats(), this.serverStats.config.interval, TimeUnit.MILLISECONDS);
+            var statsTask = this.scheduler.scheduleRepeatingTask(() -> this.serverStats.pushStats(), this.serverStats.config.interval, TimeUnit.MILLISECONDS);
+
+            this.tasks.add(webTask);
+            this.tasks.add(statsTask);
         }
 
         public void stop() {
-            this.webTask.cancel();
-            this.statsTask.cancel();
+            this.tasks.forEach(t -> t.cancel());
             this.scheduler.stop();
         }
     }

@@ -14,4 +14,8 @@ public class ServerStatsPushableConfig {
     public boolean loadedChunks = true;
     public boolean entityCount = true;
     public boolean diskSpace = true;
+    public boolean packets = true;
+    public boolean gc = true;
+    public boolean threads = true;
+    public boolean uptime = true;
 }

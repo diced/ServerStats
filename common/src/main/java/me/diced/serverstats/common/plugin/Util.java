@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,6 +58,30 @@ public class Util {
         String d = new BigDecimal(bytes).setScale(0, RoundingMode.HALF_UP).toString();
 
         return d + " " + units[num];
+    }
+
+    public static String formatDuration(long duration) {
+        Duration d = Duration.ofMillis(duration);
+
+        long days = d.toDays();
+        d = d.minusDays(days);
+
+        long hours = d.toHours();
+        d = d.minusHours(hours);
+
+        long minutes = d.toMinutes();
+        d = d.minusMinutes(minutes);
+
+        long seconds = d.getSeconds();
+
+        String str = "";
+
+        if (days > 0) str += days + "d ";
+        if (hours > 0) str += hours + "h ";
+        if (minutes > 0) str += minutes + "m ";
+        if (seconds > 0) str += seconds + "s ";
+
+        return str;
     }
 
     private static class DirectoryReader extends SimpleFileVisitor<Path> {

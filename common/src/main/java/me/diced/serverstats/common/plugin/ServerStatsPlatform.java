@@ -12,7 +12,5 @@ public interface ServerStatsPlatform {
     MetricsManager getMetricsManager();
 
     ServerStats getServerStats();
-
-    void infoLog(String msg);
     void start();
 }

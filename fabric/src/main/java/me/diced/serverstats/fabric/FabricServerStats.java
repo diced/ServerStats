@@ -1,5 +1,7 @@
 package me.diced.serverstats.fabric;
 
+import carpet.logging.logHelpers.PacketCounter;
+import me.diced.serverstats.common.plugin.LogWrapper;
 import me.diced.serverstats.common.plugin.ServerStats;
 import me.diced.serverstats.common.plugin.ServerStatsMetadata;
 import me.diced.serverstats.common.plugin.ServerStatsPlatform;
@@ -26,13 +28,27 @@ public class FabricServerStats implements ModInitializer, ServerStatsPlatform {
     private ThreadScheduler scheduler;
     private final FabricMetadata meta = new FabricMetadata();
     private FabricMetricsManager metricsManager;
-    private final Logger logger = LoggerFactory.getLogger("ServerStats");
 
     @Override
     public void onInitialize() {
         try {
+
             this.scheduler = new ThreadScheduler();
-            this.serverStats = new ServerStats(this);
+            LogWrapper logger = new LogWrapper() {
+                private final Logger logger = LoggerFactory.getLogger("ServerStats");
+
+                @Override
+                public void info(String msg) {
+                    this.logger.info(msg);
+                }
+
+                @Override
+                public void error(String msg) {
+                    this.logger.error(msg);
+                }
+            };
+
+            this.serverStats = new ServerStats(this, logger);
             this.metricsManager = new FabricMetricsManager(this);
             new FabricCommandExecutor(this);
 
@@ -66,12 +82,6 @@ public class FabricServerStats implements ModInitializer, ServerStatsPlatform {
     public MetricsManager getMetricsManager() {
         return this.metricsManager;
     }
-
-    @Override
-    public void infoLog(String msg) {
-        this.logger.info(msg);
-    }
-
 
     @Override
     public void start() {

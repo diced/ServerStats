@@ -25,6 +25,38 @@ There's multiple places where you can download ServerStats
 * Grafana: visualize your stats in Grafana using our provided dashboard
 * Cross server compatible: works with proxy servers, Fabric and Bukkit compatible servers (Spigot, Paper, etc)
 
+## Metrics
+This is a list of all the metrics provides. The code block has the config property.
+[Docs Link to Configuration](https://serverstats.diced.me/docs/config#pushable)
+### Player Count `player-count`
+The online player count
+### Free Memory `free-memory`
+Free memory in JVM
+### Max Memory  `max-memory`
+Max memory in JVM
+### Total Memory `total-memory`
+Total memory allocated to JVM
+### TPS `tps`
+Ticks per-second (usually 20)
+### MSPT `mspt`
+Milliseconds per-tick (usually below 50ms for good perf)
+### CPU % `cpu`
+CPU Percentage
+### Loaded Chunks `loaded-chunks`
+Loaded chunks in each world
+### Entity Count `entity-count`
+Entity count in each world
+### Disk Space used `disk-space`
+Dick space that each world is using
+### Packets Sent/Read `packets`
+Packets that are being sent to clients and being read from clients
+### Garbage Collection Time `gc`
+The time it took to do the last GC
+### Thread Count `threads`
+The amount of JVM threads
+### Uptime `uptime`
+The uptime of the server
+
 ## Compiling
 You must be using Java 16+ as Fabric/Minecraft 1.17 requires it, or go into the directory you want and build using a different JDK.
 ```shell

@@ -1,6 +1,7 @@
 package me.diced.serverstats.fabric;
 
 import carpet.helpers.TickSpeed;
+import carpet.logging.logHelpers.PacketCounter;
 import me.diced.serverstats.common.prometheus.MetricsManager;
 import net.minecraft.util.math.MathHelper;
 
@@ -48,6 +49,16 @@ public class FabricMetricsManager extends MetricsManager {
         this.platform.server.getWorlds().forEach(w -> w.iterateEntities().forEach(e -> entityCount.incrementAndGet()));
 
         return entityCount.intValue();
+    }
+
+    @Override
+    public long getPacketRx() {
+        return PacketCounter.totalIn;
+    }
+
+    @Override
+    public long getPacketTx() {
+        return PacketCounter.totalOut;
     }
 
     @Override

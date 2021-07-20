@@ -1,4 +1,4 @@
-package me.diced.serverstats.common.prometheus.metrics;
+package me.diced.serverstats.common.prometheus.metrics.server;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import me.diced.serverstats.common.prometheus.Metric;
@@ -9,15 +9,15 @@ import static me.diced.serverstats.common.plugin.Util.heatmapColor;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
 
-public class TPS extends Metric<AtomicDouble> {
+public class MSPT extends Metric<AtomicDouble> {
 
-    public TPS(String name, MetricsManager manager) {
+    public MSPT(String name, MetricsManager manager) {
         super(name, "gauge", manager, new AtomicDouble());
     }
 
     @Override
     public void run() {
-        this.collector.set(this.manager.getTps());
+        this.collector.set(this.manager.getMspt());
     }
 
     @Override
@@ -27,11 +27,11 @@ public class TPS extends Metric<AtomicDouble> {
 
     @Override
     public Component formatComponent() {
-        return text().append(text("TPS: ", GOLD)).append(text(String.format("%.1f", this.collector.doubleValue()), heatmapColor(this.manager.getMspt(), 50))).asComponent();
+        return text().append(text("MSPT: ", GOLD)).append(text(String.format("%.1f ms", this.collector.doubleValue()), heatmapColor(this.collector.doubleValue(), 50))).asComponent();
     }
 
     @Override
     public boolean enabled() {
-        return this.manager.config.pushable.tps;
+        return this.manager.config.pushable.mspt;
     }
 }
