@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 public class VelocityScheduler implements Scheduler {
     private final VelocityServerStats platform;
     private final com.velocitypowered.api.scheduler.Scheduler scheduler;
+
     public VelocityScheduler(VelocityServerStats platform) {
         this.platform = platform;
         this.scheduler = platform.server.getScheduler();

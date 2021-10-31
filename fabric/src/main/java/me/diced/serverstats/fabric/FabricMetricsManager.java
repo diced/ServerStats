@@ -6,7 +6,6 @@ import me.diced.serverstats.common.prometheus.MetricsManager;
 import net.minecraft.util.math.MathHelper;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 

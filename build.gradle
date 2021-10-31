@@ -11,7 +11,6 @@ buildscript {
 group = project.mod_group
 version = project.mod_version
 
-
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven-publish'

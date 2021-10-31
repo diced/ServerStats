@@ -13,7 +13,7 @@ public class BukkitMetadata implements ServerStatsMetadata {
 
     @Override
     public ServerStatsType getType() {
-        return ServerStatsType.BUNGEE;
+        return ServerStatsType.BUKKIT;
     }
 
     @Override
