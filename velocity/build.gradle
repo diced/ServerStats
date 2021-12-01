@@ -28,6 +28,7 @@ shadowJar {
 
     relocate 'org.spongepowered.configurate', "${rootProject.group}.lib.org.spongepowered.configurate"
     relocate 'org.checkerframework', "${rootProject.group}.lib.org.checkerframework"
+
 }
 
 tasks.build.dependsOn tasks.shadowJar

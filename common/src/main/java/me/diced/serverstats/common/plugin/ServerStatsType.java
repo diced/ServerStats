@@ -8,13 +8,15 @@ public enum ServerStatsType {
 
     public String toString() {
         if (this == FABRIC) return "Fabric";
-        else if (this == BUKKIT) return "Bukkit";
+        else if (this == BUKKIT) return "Fabric";
         else if (this == BUNGEE) return "Bungee";
         else if (this == VELOCITY) return "Velocity";
         else return "Bukkit";
     }
 
     public boolean isProxy() {
-        return this == VELOCITY || this == BUNGEE;
+        if (this == BUNGEE) return true;
+        else if (this == VELOCITY) return true;
+        else return false;
     }
 }
